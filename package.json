@@ -6,7 +6,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "node build"
+    "start": "bun build/index.js"
   },
   "dependencies": {
     "@sveltejs/adapter-node": "^5.2.0",
