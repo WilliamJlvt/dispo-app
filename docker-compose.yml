@@ -12,11 +12,11 @@ services:
       - ORIGIN=${ORIGIN}
       - DATA_DIR=/data
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.crenaux.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.crenaux.entrypoints=websecure"
-      - "traefik.http.routers.crenaux.tls.certresolver=letsencrypt"
-      - "traefik.http.services.crenaux.loadbalancer.server.port=3000"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.crenaux.rule=Host(`${DOMAIN}`)'
+      - 'traefik.http.routers.crenaux.entrypoints=websecure'
+      - 'traefik.http.routers.crenaux.tls.certresolver=letsencrypt'
+      - 'traefik.http.services.crenaux.loadbalancer.server.port=3000'
     networks:
       - traefik
 

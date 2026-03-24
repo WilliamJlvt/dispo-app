@@ -118,7 +118,7 @@
 
   // Text color helper: dark text on light backgrounds, white on dark
   function textColor(ratio: number): string {
-    return ratio > 0.55 ? 'text-white' : 'text-slate-700';
+    return ratio > 0.45 ? 'text-white' : 'text-zinc-600';
   }
 </script>
 

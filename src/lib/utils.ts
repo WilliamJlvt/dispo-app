@@ -44,15 +44,28 @@ export function getHours(hourStart: number, hourEnd: number): number[] {
 
 /**
  * Returns a CSS color string for a given convergence ratio (0–1).
- * 0 => slate-50 (#f8fafc), 1 => dark navy (#0d1b2a)
+ * 0       => off-white
+ * 0–0.5   => off-white → green-400 (#4ade80)
+ * 0.5–1   => green-400 → green-800 (#166534)
  */
 export function heatmapColor(ratio: number): string {
-  if (ratio === 0) return '#f8fafc'; // slate-50
-  // Interpolate from #e0eeff (very light blue) to #0d1b2a (dark navy)
-  const r = Math.round(224 + ratio * (13 - 224));
-  const g = Math.round(238 + ratio * (27 - 238));
-  const b = Math.round(255 + ratio * (42 - 255));
-  return `rgb(${r},${g},${b})`;
+  if (ratio === 0) return '#f9fafb';
+
+  if (ratio <= 0.5) {
+    const t = ratio * 2;
+    // #f0fdf4 (green-50) → #4ade80 (green-400)
+    const r = Math.round(240 + t * (74 - 240));
+    const g = Math.round(253 + t * (222 - 253));
+    const b = Math.round(244 + t * (128 - 244));
+    return `rgb(${r},${g},${b})`;
+  } else {
+    const t = (ratio - 0.5) * 2;
+    // #4ade80 (green-400) → #166534 (green-800)
+    const r = Math.round(74 + t * (22 - 74));
+    const g = Math.round(222 + t * (101 - 222));
+    const b = Math.round(128 + t * (52 - 128));
+    return `rgb(${r},${g},${b})`;
+  }
 }
 
 /**
