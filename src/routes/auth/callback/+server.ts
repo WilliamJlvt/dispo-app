@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getGoogle, createSession, decodeIdToken } from '$lib/server/auth';
+import { getGoogle, createSession } from '$lib/server/auth';
 import { getConfig } from '$lib/server/data';
 import { OAuth2RequestError } from 'arctic';
 
@@ -20,15 +20,29 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
   try {
     const tokens = await getGoogle().validateAuthorizationCode(code, codeVerifier);
 
-    const accessToken = tokens.accessToken();
-    const idToken = tokens.idToken();
+    const accessToken = tokens.accessToken;
 
-    const { email, name, picture } = decodeIdToken(idToken);
+    const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const userInfo = await userInfoRes.json();
+    console.log('[auth] userInfo complet:', userInfo);
+    const email: string = userInfo.email;
+    const name: string = userInfo.name ?? '';
+    const picture: string = userInfo.picture ?? '';
 
+    console.log('[auth] email reçu:', email);
     const config = getConfig();
-    if (!config.allowed_emails.includes(email)) {
-      redirect(302, '/?error=unauthorized');
-    }
+    console.log('[auth] allowed_emails:', config.allowed_emails);
+    const isAllowed = config.allowed_emails.some((pattern) => {
+      if (pattern === email) return true;
+      if (pattern.startsWith('*@')) {
+        const domain = pattern.slice(2);
+        return email.endsWith('@' + domain);
+      }
+      return false;
+    });
+    if (!isAllowed) redirect(302, '/?error=unauthorized');
 
     const sessionToken = await createSession({ email, name, picture, accessToken });
 

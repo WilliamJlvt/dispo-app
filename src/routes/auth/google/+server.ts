@@ -6,14 +6,9 @@ export const GET: RequestHandler = async ({ cookies }) => {
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
 
-  const scopes = [
-    'openid',
-    'email',
-    'profile',
-    'https://www.googleapis.com/auth/calendar.readonly'
-  ];
-
-  const url = await getGoogle().createAuthorizationURL(state, codeVerifier, scopes);
+  const url = await getGoogle().createAuthorizationURL(state, codeVerifier, {
+    scopes: ['email', 'profile', 'https://www.googleapis.com/auth/calendar.readonly']
+  });
 
   cookies.set('oauth_state', state, {
     path: '/',
