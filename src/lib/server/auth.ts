@@ -1,18 +1,21 @@
 import { Google, generateState, generateCodeVerifier } from 'arctic';
 import { SignJWT, jwtVerify, decodeJwt } from 'jose';
+import { env } from '$env/dynamic/private';
 import type { SessionUser } from '$lib/types';
 
 export { generateState, generateCodeVerifier };
 
-export const google = new Google(
-  process.env.GOOGLE_CLIENT_ID!,
-  process.env.GOOGLE_CLIENT_SECRET!,
-  process.env.GOOGLE_REDIRECT_URI!
-);
+export function getGoogle(): Google {
+  return new Google(
+    env.GOOGLE_CLIENT_ID,
+    env.GOOGLE_CLIENT_SECRET,
+    env.GOOGLE_REDIRECT_URI
+  );
+}
 
-const secret = new TextEncoder().encode(
-  process.env.SESSION_SECRET || 'change-me-32-chars-minimum-pls!!'
-);
+function getSecret(): Uint8Array {
+  return new TextEncoder().encode(env.SESSION_SECRET || 'change-me-32-chars-minimum-pls!!');
+}
 
 export async function createSession(user: SessionUser): Promise<string> {
   return new SignJWT({
@@ -24,12 +27,12 @@ export async function createSession(user: SessionUser): Promise<string> {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
-    .sign(secret);
+    .sign(getSecret());
 }
 
 export async function verifySession(token: string): Promise<SessionUser | null> {
   try {
-    const { payload } = await jwtVerify(token, secret);
+    const { payload } = await jwtVerify(token, getSecret());
     return {
       email: payload.email as string,
       name: payload.name as string,

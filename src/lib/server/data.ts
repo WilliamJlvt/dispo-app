@@ -1,11 +1,20 @@
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
+import { env } from '$env/dynamic/private';
 import type { Creneau, AppConfig } from '$lib/types';
 
-const DATA_DIR = process.env.DATA_DIR || './data';
-const CONFIG_PATH = path.join(DATA_DIR, 'config.yaml');
-const CRENAUX_DIR = path.join(DATA_DIR, 'crenaux');
+function dataDir(): string {
+  return env.DATA_DIR || './data';
+}
+
+function configPath(): string {
+  return path.join(dataDir(), 'config.yaml');
+}
+
+function crenauxDir(): string {
+  return path.join(dataDir(), 'crenaux');
+}
 
 function ensureDir(dir: string) {
   if (!fs.existsSync(dir)) {
@@ -13,7 +22,6 @@ function ensureDir(dir: string) {
   }
 }
 
-/** Atomic write: write to .tmp, then rename */
 function atomicWrite(filePath: string, content: string) {
   const tmpPath = filePath + '.tmp';
   fs.writeFileSync(tmpPath, content, 'utf-8');
@@ -22,7 +30,7 @@ function atomicWrite(filePath: string, content: string) {
 
 export function getConfig(): AppConfig {
   try {
-    const raw = fs.readFileSync(CONFIG_PATH, 'utf-8');
+    const raw = fs.readFileSync(configPath(), 'utf-8');
     return yaml.load(raw) as AppConfig;
   } catch {
     return { allowed_emails: [] };
@@ -30,12 +38,12 @@ export function getConfig(): AppConfig {
 }
 
 export function saveConfig(config: AppConfig): void {
-  ensureDir(DATA_DIR);
-  atomicWrite(CONFIG_PATH, yaml.dump(config, { lineWidth: -1 }));
+  ensureDir(dataDir());
+  atomicWrite(configPath(), yaml.dump(config, { lineWidth: -1 }));
 }
 
 export function getCreneau(slug: string): Creneau | null {
-  const filePath = path.join(CRENAUX_DIR, `${slug}.yaml`);
+  const filePath = path.join(crenauxDir(), `${slug}.yaml`);
   try {
     const raw = fs.readFileSync(filePath, 'utf-8');
     return yaml.load(raw) as Creneau;
@@ -45,18 +53,18 @@ export function getCreneau(slug: string): Creneau | null {
 }
 
 export function saveCreneau(creneau: Creneau): void {
-  ensureDir(CRENAUX_DIR);
-  const filePath = path.join(CRENAUX_DIR, `${creneau.id}.yaml`);
+  ensureDir(crenauxDir());
+  const filePath = path.join(crenauxDir(), `${creneau.id}.yaml`);
   atomicWrite(filePath, yaml.dump(creneau, { lineWidth: -1 }));
 }
 
 export function listCrenaux(): Creneau[] {
-  ensureDir(CRENAUX_DIR);
+  ensureDir(crenauxDir());
   try {
-    const files = fs.readdirSync(CRENAUX_DIR).filter((f) => f.endsWith('.yaml'));
+    const files = fs.readdirSync(crenauxDir()).filter((f) => f.endsWith('.yaml'));
     const crenaux: Creneau[] = [];
     for (const file of files) {
-      const filePath = path.join(CRENAUX_DIR, file);
+      const filePath = path.join(crenauxDir(), file);
       try {
         const raw = fs.readFileSync(filePath, 'utf-8');
         crenaux.push(yaml.load(raw) as Creneau);
@@ -73,7 +81,7 @@ export function listCrenaux(): Creneau[] {
 }
 
 export function deleteCreneau(slug: string): boolean {
-  const filePath = path.join(CRENAUX_DIR, `${slug}.yaml`);
+  const filePath = path.join(crenauxDir(), `${slug}.yaml`);
   try {
     fs.unlinkSync(filePath);
     return true;
