@@ -1,60 +1,58 @@
 <script lang="ts">
-  import '../app.css';
-  import type { LayoutData } from './$types';
+	import '../app.css';
+	import type { LayoutData } from './$types';
 
-  let { data, children } = $props<{ data: LayoutData; children: any }>();
+	let { data, children } = $props<{ data: LayoutData; children: any }>();
 </script>
 
-<div class="min-h-screen flex flex-col bg-white text-zinc-950">
-  <header class="border-b border-zinc-200 bg-white sticky top-0 z-50">
-    <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-      <a href="/" class="font-semibold text-sm tracking-tight hover:text-zinc-600">
-        Créneaux
-      </a>
-      <nav class="flex items-center gap-1">
-        {#if data.user}
-          <a
-            href="/nouveau"
-            class="text-sm text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 px-3 py-1.5 rounded-md font-medium"
-          >
-            Nouveau
-          </a>
-          <a
-            href="/admin"
-            class="text-sm text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 px-3 py-1.5 rounded-md font-medium"
-          >
-            Admin
-          </a>
-          <div class="w-px h-4 bg-zinc-200 mx-1"></div>
-          <div class="flex items-center gap-2 pl-1">
-            {#if data.user.picture}
-              <img
-                src={data.user.picture}
-                alt={data.user.name}
-                class="w-7 h-7 rounded-full object-cover border border-zinc-200"
-              />
-            {/if}
-            <span class="text-sm text-zinc-600 hidden sm:inline">{data.user.name}</span>
-          </div>
-          <a
-            href="/auth/logout"
-            class="text-sm text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 px-3 py-1.5 rounded-md ml-1"
-          >
-            Déconnexion
-          </a>
-        {:else}
-          <a
-            href="/auth/google"
-            class="inline-flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-medium px-4 py-2 rounded-md"
-          >
-            Connexion
-          </a>
-        {/if}
-      </nav>
-    </div>
-  </header>
+<div class="flex min-h-screen flex-col bg-white text-zinc-950">
+	<header class="sticky top-0 z-50 border-b border-zinc-200 bg-white">
+		<div class="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
+			<a href="/" class="text-sm font-semibold tracking-tight hover:text-zinc-600"> Créneaux </a>
+			<nav class="flex items-center gap-1">
+				{#if data.user}
+					<a
+						href="/nouveau"
+						class="rounded-md px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"
+					>
+						Nouveau
+					</a>
+					<a
+						href="/admin"
+						class="rounded-md px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"
+					>
+						Admin
+					</a>
+					<div class="mx-1 h-4 w-px bg-zinc-200"></div>
+					<div class="flex items-center gap-2 pl-1">
+						{#if data.user.picture}
+							<img
+								src={data.user.picture}
+								alt={data.user.name}
+								class="h-7 w-7 rounded-full border border-zinc-200 object-cover"
+							/>
+						{/if}
+						<span class="hidden text-sm text-zinc-600 sm:inline">{data.user.name}</span>
+					</div>
+					<a
+						href="/auth/logout"
+						class="ml-1 rounded-md px-3 py-1.5 text-sm text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
+					>
+						Déconnexion
+					</a>
+				{:else}
+					<a
+						href="/auth/google"
+						class="inline-flex items-center gap-2 rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+					>
+						Connexion
+					</a>
+				{/if}
+			</nav>
+		</div>
+	</header>
 
-  <main class="flex-1">
-    {@render children()}
-  </main>
+	<main class="flex-1">
+		{@render children()}
+	</main>
 </div>

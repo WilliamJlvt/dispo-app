@@ -6,57 +6,53 @@ import type { CalendarEvent } from '$lib/types';
  * Returns [] silently on any error (calendar access is optional/non-blocking).
  */
 export async function getCalendarEvents(
-  accessToken: string,
-  dateStart: string,
-  dateEnd: string
+	accessToken: string,
+	dateStart: string,
+	dateEnd: string
 ): Promise<CalendarEvent[]> {
-  try {
-    const auth = new googleApis.auth.OAuth2();
-    auth.setCredentials({ access_token: accessToken });
+	try {
+		const auth = new googleApis.auth.OAuth2();
+		auth.setCredentials({ access_token: accessToken });
 
-    const calendar = googleApis.calendar({ version: 'v3', auth });
+		const calendar = googleApis.calendar({ version: 'v3', auth });
 
-    // timeMax is exclusive, so add 1 day to dateEnd
-    const timeMin = new Date(dateStart + 'T00:00:00').toISOString();
-    const endDate = new Date(dateEnd + 'T00:00:00');
-    endDate.setDate(endDate.getDate() + 1);
-    const timeMax = endDate.toISOString();
+		// timeMax is exclusive, so add 1 day to dateEnd
+		const timeMin = new Date(dateStart + 'T00:00:00').toISOString();
+		const endDate = new Date(dateEnd + 'T00:00:00');
+		endDate.setDate(endDate.getDate() + 1);
+		const timeMax = endDate.toISOString();
 
-    const res = await calendar.events.list({
-      calendarId: 'primary',
-      timeMin,
-      timeMax,
-      singleEvents: true,
-      orderBy: 'startTime',
-      maxResults: 250
-    });
+		const res = await calendar.events.list({
+			calendarId: 'primary',
+			timeMin,
+			timeMax,
+			singleEvents: true,
+			orderBy: 'startTime',
+			maxResults: 250
+		});
 
-    const items = res.data.items ?? [];
-    const events: CalendarEvent[] = [];
+		const items = res.data.items ?? [];
+		const events: CalendarEvent[] = [];
 
-    for (const item of items) {
-      const startRaw = item.start?.dateTime ?? item.start?.date;
-      const endRaw = item.end?.dateTime ?? item.end?.date;
-      if (!startRaw || !endRaw) continue;
+		for (const item of items) {
+			const startRaw = item.start?.dateTime ?? item.start?.date;
+			const endRaw = item.end?.dateTime ?? item.end?.date;
+			if (!startRaw || !endRaw) continue;
 
-      // For all-day events (date only), treat as full day
-      const start = startRaw.includes('T')
-        ? startRaw
-        : startRaw + 'T00:00:00';
-      const end = endRaw.includes('T')
-        ? endRaw
-        : endRaw + 'T23:59:59';
+			// For all-day events (date only), treat as full day
+			const start = startRaw.includes('T') ? startRaw : startRaw + 'T00:00:00';
+			const end = endRaw.includes('T') ? endRaw : endRaw + 'T23:59:59';
 
-      events.push({
-        id: item.id ?? '',
-        summary: item.summary ?? '(Sans titre)',
-        start,
-        end
-      });
-    }
+			events.push({
+				id: item.id ?? '',
+				summary: item.summary ?? '(Sans titre)',
+				start,
+				end
+			});
+		}
 
-    return events;
-  } catch {
-    return [];
-  }
+		return events;
+	} catch {
+		return [];
+	}
 }
