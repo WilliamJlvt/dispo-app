@@ -64,7 +64,7 @@
 		</a>
 
 		<div class="mt-16 grid grid-cols-1 gap-4 text-left sm:grid-cols-3">
-			{#each [{ icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', title: 'Créez un créneau', desc: 'Définissez une plage de dates et la fenêtre horaire.' }, { icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', title: 'Cochez vos dispo', desc: 'Cliquez sur les cases pour indiquer vos disponibilités.' }, { icon: 'M13 10V3L4 14h7v7l9-11h-7z', title: 'Convergence live', desc: 'La heatmap révèle en temps réel les meilleurs créneaux.' }] as item}
+			{#each [{ icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', title: 'Créez un créneau', desc: 'Définissez une plage de dates et la fenêtre horaire.' }, { icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', title: 'Cochez vos dispo', desc: 'Cliquez sur les cases pour indiquer vos disponibilités.' }, { icon: 'M13 10V3L4 14h7v7l9-11h-7z', title: 'Convergence live', desc: 'La heatmap révèle en temps réel les meilleurs créneaux.' }] as item (item.title)}
 				<div class="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
 					<div
 						class="mb-3 flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 bg-white shadow-sm"
@@ -123,7 +123,7 @@
 			</div>
 		{:else}
 			<div class="divide-y divide-zinc-100 overflow-hidden rounded-lg border border-zinc-200">
-				{#each data.crenaux as c}
+				{#each data.crenaux as c (c.id)}
 					<a
 						href="/c/{c.id}"
 						class="group flex items-center justify-between gap-4 px-4 py-3.5 hover:bg-zinc-50"

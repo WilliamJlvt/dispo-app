@@ -117,11 +117,6 @@
 		};
 		return () => es.close();
 	});
-
-	// Text color helper: dark text on light backgrounds, white on dark
-	function textColor(ratio: number): string {
-		return ratio > 0.45 ? 'text-white' : 'text-zinc-600';
-	}
 </script>
 
 <svelte:head>
@@ -198,7 +193,7 @@
 		</div>
 		<div class="flex items-center gap-1.5">
 			<div class="flex gap-0.5">
-				{#each [0, 0.33, 0.66, 1] as r}
+				{#each [0, 0.33, 0.66, 1] as r (r)}
 					<div
 						class="h-3.5 w-3.5 rounded-sm"
 						style="background-color: {heatmapColor(r)}; border: 1px solid rgba(0,0,0,0.06)"
@@ -219,7 +214,7 @@
 							class="sticky left-0 z-10 border-r border-b border-zinc-200 bg-zinc-50 px-3 py-3"
 							style="min-width: 56px;"
 						></th>
-						{#each dates as date}
+						{#each dates as date (date)}
 							{@const parts = formatDateParts(date)}
 							<th
 								class="border-r border-b border-zinc-200 px-2 py-2.5 text-center whitespace-nowrap"
@@ -236,7 +231,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each hours as hour, hi}
+					{#each hours as hour, hi (hour)}
 						<tr>
 							<td
 								class="sticky left-0 z-10 border-r border-zinc-200 bg-white px-3 text-right align-middle"
@@ -245,11 +240,10 @@
 							>
 								<span class="text-xs font-medium text-zinc-400">{formatHour(hour)}</span>
 							</td>
-							{#each dates as date, di}
+							{#each dates as date, di (date)}
 								{@const conv = getConvergence(date, hour)}
 								{@const mine = isMySlot(date, hour)}
 								{@const hasEvent = hasCalendarEvent(date, hour)}
-								<!-- svelte-ignore a11y_interactive_supports_focus -->
 								<td
 									class="group relative cursor-pointer select-none"
 									class:border-b={hi < hours.length - 1}
@@ -324,7 +318,7 @@
 					Participants · {participants.length}
 				</h2>
 				<div class="flex flex-wrap gap-1.5">
-					{#each participants as email}
+					{#each participants as email (email)}
 						{@const resp = effectiveResponses[email]}
 						<div
 							class="inline-flex h-7 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs"
@@ -348,7 +342,7 @@
 			</h2>
 			{#if bestSlots.length > 0}
 				<div class="space-y-1.5">
-					{#each bestSlots as slot, i}
+					{#each bestSlots as slot, i (i)}
 						<div
 							class="flex items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50 px-3 py-2.5"
 						>

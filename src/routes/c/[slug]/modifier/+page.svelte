@@ -100,7 +100,7 @@
 					class="h-9 w-full rounded-md border border-zinc-200 bg-white px-3 text-sm text-zinc-950
                  focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-1"
 				>
-					{#each hourOptions as h}
+					{#each hourOptions as h (h)}
 						<option value={h}>{h}h00</option>
 					{/each}
 				</select>
@@ -114,7 +114,7 @@
 					class="h-9 w-full rounded-md border border-zinc-200 bg-white px-3 text-sm text-zinc-950
                  focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-1"
 				>
-					{#each hourOptions as h}
+					{#each hourOptions as h (h)}
 						<option value={h}>{h}h00</option>
 					{/each}
 				</select>

@@ -79,7 +79,7 @@
 			<p class="text-sm text-zinc-400">Aucun créneau.</p>
 		{:else}
 			<div class="divide-y divide-zinc-100 overflow-hidden rounded-lg border border-zinc-200">
-				{#each data.crenaux as creneau}
+				{#each data.crenaux as creneau (creneau.id)}
 					<div class="flex items-center justify-between gap-4 px-4 py-3">
 						<div class="min-w-0">
 							<a
@@ -103,7 +103,7 @@
 										method="POST"
 										action="?/deleteCreneau"
 										use:enhance={() => {
-											return async ({ result, update }) => {
+											return async ({ update }) => {
 												confirmDelete = null;
 												await update();
 											};
