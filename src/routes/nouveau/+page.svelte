@@ -3,9 +3,11 @@
 
   let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
+  const { defaultStart, defaultEnd } = data;
+
   let title = $state('');
-  let dateStart = $state(data.defaultStart);
-  let dateEnd = $state(data.defaultEnd);
+  let dateStart = $state(defaultStart);
+  let dateEnd = $state(defaultEnd);
   let hourStart = $state(10);
   let hourEnd = $state(20);
   let includeWeekends = $state(false);

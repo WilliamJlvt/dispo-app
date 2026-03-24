@@ -13,16 +13,14 @@
 
   let { data } = $props<{ data: PageData }>();
 
-  const dates = getDatesInRange(
-    data.creneau.date_start,
-    data.creneau.date_end,
-    data.creneau.include_weekends
-  );
-  const hours = getHours(data.creneau.hour_start, data.creneau.hour_end);
+  const { creneau, user, calendarEvents: initialCalendarEvents } = data;
 
-  let serverResponses = $state<Record<string, UserResponse>>(data.creneau.responses);
+  const dates = getDatesInRange(creneau.date_start, creneau.date_end, creneau.include_weekends);
+  const hours = getHours(creneau.hour_start, creneau.hour_end);
+
+  let serverResponses = $state<Record<string, UserResponse>>(creneau.responses);
   let mySlots = $state<Record<string, number[]>>(
-    data.creneau.responses[data.user.email]?.slots ?? {}
+    creneau.responses[user.email]?.slots ?? {}
   );
   let saving = $state(false);
   let saveTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -31,8 +29,8 @@
   // Effective responses: server data merged with current user's live selections
   let effectiveResponses = $derived<Record<string, UserResponse>>({
     ...serverResponses,
-    [data.user.email]: {
-      name: data.user.name,
+    [user.email]: {
+      name: user.name,
       updated_at: new Date().toISOString(),
       slots: mySlots
     }
@@ -52,7 +50,7 @@
   }
 
   function hasCalendarEvent(date: string, hour: number): boolean {
-    return (data.calendarEvents as CalendarEvent[]).some((ev) =>
+    return (initialCalendarEvents as CalendarEvent[]).some((ev) =>
       eventOverlapsSlot(ev, date, hour)
     );
   }
@@ -71,7 +69,7 @@
   async function save() {
     saving = true;
     try {
-      await fetch(`/api/crenaux/${data.creneau.id}`, {
+      await fetch(`/api/crenaux/${creneau.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ slots: mySlots })
@@ -107,7 +105,7 @@
   }
 
   onMount(() => {
-    const es = new EventSource(`/c/${data.creneau.id}/stream`);
+    const es = new EventSource(`/c/${creneau.id}/stream`);
     es.onmessage = (e) => {
       const newResponses = JSON.parse(e.data) as Record<string, UserResponse>;
       // Merge: preserve our own local state but update others
@@ -123,7 +121,7 @@
 </script>
 
 <svelte:head>
-  <title>{data.creneau.title} - Créneaux</title>
+  <title>{creneau.title} - Créneaux</title>
 </svelte:head>
 
 <div class="max-w-5xl mx-auto px-4 py-6">
@@ -136,10 +134,10 @@
 
   <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
     <div>
-      <h1 class="text-2xl font-bold text-[#0d1b2a]">{data.creneau.title}</h1>
+      <h1 class="text-2xl font-bold text-[#0d1b2a]">{creneau.title}</h1>
       <p class="text-sm text-slate-500 mt-1">
-        {formatDate(data.creneau.date_start)} &rarr; {formatDate(data.creneau.date_end)}
-        &middot; {data.creneau.hour_start}h&ndash;{data.creneau.hour_end}h
+        {formatDate(creneau.date_start)} &rarr; {formatDate(creneau.date_end)}
+        &middot; {creneau.hour_start}h&ndash;{creneau.hour_end}h
         &middot; {participants.length} participant{participants.length !== 1 ? 's' : ''}
       </p>
     </div>
@@ -278,7 +276,7 @@
           {@const resp = effectiveResponses[email]}
           <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5">
             <span class="text-sm text-slate-700">{resp.name}</span>
-            {#if email === data.user.email}
+            {#if email === user.email}
               <span class="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Vous</span>
             {/if}
           </div>
