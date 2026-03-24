@@ -8,6 +8,7 @@
 		"preview": "vite preview",
 		"start": "bun build/index.js",
 		"lint": "prettier --check . && eslint .",
+		"lint:fix": "prettier --write . && eslint . --fix",
 		"format": "prettier --write ."
 	},
 	"dependencies": {
