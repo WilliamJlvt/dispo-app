@@ -152,6 +152,14 @@
       {:else}
         <span class="text-xs text-zinc-300">Sauvegardé</span>
       {/if}
+      {#if user.email === creneau.created_by}
+        <a
+          href="/c/{creneau.id}/modifier"
+          class="h-8 text-sm border border-zinc-200 hover:bg-zinc-50 text-zinc-600 hover:text-zinc-950 px-3 rounded-md inline-flex items-center"
+        >
+          Modifier
+        </a>
+      {/if}
       <button
         onclick={copyLink}
         class="h-8 text-sm border border-zinc-200 hover:bg-zinc-50 text-zinc-600 hover:text-zinc-950 px-3 rounded-md"
