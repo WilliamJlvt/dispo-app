@@ -172,7 +172,11 @@
   <!-- Legend -->
   <div class="flex flex-wrap items-center gap-4 mb-4 text-xs text-zinc-400">
     <div class="flex items-center gap-1.5">
-      <div class="w-3.5 h-3.5 rounded-sm ring-2 ring-blue-500 bg-white"></div>
+      <div class="w-3.5 h-3.5 rounded-full bg-white shadow-sm border border-zinc-200 flex items-center justify-center">
+        <svg class="w-2 h-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
       <span>Votre sélection</span>
     </div>
     <div class="flex items-center gap-1.5">
@@ -242,9 +246,13 @@
                   <!-- Hover overlay -->
                   <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
 
-                  <!-- Selection ring -->
+                  <!-- Selection check -->
                   {#if mine}
-                    <div class="absolute inset-[3px] rounded-md ring-2 ring-blue-500 pointer-events-none"></div>
+                    <div class="absolute top-1.5 left-1.5 w-4 h-4 rounded-full bg-white shadow-sm flex items-center justify-center pointer-events-none">
+                      <svg class="w-2.5 h-2.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
                   {/if}
 
                   <!-- Calendar dot -->
