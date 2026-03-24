@@ -16,28 +16,33 @@
 </script>
 
 <svelte:head>
-  <title>Nouveau créneau - Créneaux</title>
+  <title>Nouveau créneau — Créneaux</title>
 </svelte:head>
 
-<div class="max-w-xl mx-auto px-4 py-8">
+<div class="max-w-lg mx-auto px-4 py-10">
   <div class="mb-6">
-    <a href="/" class="text-sm text-slate-500 hover:text-slate-700 transition-colors">
-      &larr; Retour
+    <a href="/" class="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-950">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+      Retour
     </a>
   </div>
 
-  <h1 class="text-2xl font-bold text-[#0d1b2a] mb-6">Nouveau créneau</h1>
+  <div class="mb-8">
+    <h1 class="text-xl font-semibold text-zinc-950">Nouveau créneau</h1>
+    <p class="text-sm text-zinc-500 mt-1">Définissez la plage de dates et les horaires.</p>
+  </div>
 
   {#if form?.error}
-    <div class="mb-4 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
+    <div class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
       {form.error}
     </div>
   {/if}
 
   <form method="POST" class="space-y-5">
-    <!-- Title -->
-    <div>
-      <label for="title" class="block text-sm font-medium text-slate-700 mb-1">
+    <div class="space-y-1.5">
+      <label for="title" class="text-sm font-medium text-zinc-950">
         Titre <span class="text-red-500">*</span>
       </label>
       <input
@@ -47,16 +52,15 @@
         required
         bind:value={title}
         placeholder="Ex: Réunion équipe produit"
-        class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-slate-900 placeholder-slate-400
-               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+        class="w-full h-9 rounded-md border border-zinc-200 bg-white px-3 text-sm text-zinc-950
+               placeholder-zinc-400 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-1"
       />
     </div>
 
-    <!-- Date range -->
     <div class="grid grid-cols-2 gap-4">
-      <div>
-        <label for="date_start" class="block text-sm font-medium text-slate-700 mb-1">
-          Date de début <span class="text-red-500">*</span>
+      <div class="space-y-1.5">
+        <label for="date_start" class="text-sm font-medium text-zinc-950">
+          Début <span class="text-red-500">*</span>
         </label>
         <input
           id="date_start"
@@ -64,13 +68,13 @@
           type="date"
           required
           bind:value={dateStart}
-          class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-slate-900
-                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+          class="w-full h-9 rounded-md border border-zinc-200 bg-white px-3 text-sm text-zinc-950
+                 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-1"
         />
       </div>
-      <div>
-        <label for="date_end" class="block text-sm font-medium text-slate-700 mb-1">
-          Date de fin <span class="text-red-500">*</span>
+      <div class="space-y-1.5">
+        <label for="date_end" class="text-sm font-medium text-zinc-950">
+          Fin <span class="text-red-500">*</span>
         </label>
         <input
           id="date_end"
@@ -78,40 +82,35 @@
           type="date"
           required
           bind:value={dateEnd}
-          class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-slate-900
-                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+          class="w-full h-9 rounded-md border border-zinc-200 bg-white px-3 text-sm text-zinc-950
+                 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-1"
         />
       </div>
     </div>
 
-    <!-- Hours -->
     <div class="grid grid-cols-2 gap-4">
-      <div>
-        <label for="hour_start" class="block text-sm font-medium text-slate-700 mb-1">
-          Heure de début
-        </label>
+      <div class="space-y-1.5">
+        <label for="hour_start" class="text-sm font-medium text-zinc-950">Heure début</label>
         <select
           id="hour_start"
           name="hour_start"
           bind:value={hourStart}
-          class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-slate-900
-                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+          class="w-full h-9 rounded-md border border-zinc-200 bg-white px-3 text-sm text-zinc-950
+                 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-1"
         >
           {#each hourOptions as h}
             <option value={h}>{h}h00</option>
           {/each}
         </select>
       </div>
-      <div>
-        <label for="hour_end" class="block text-sm font-medium text-slate-700 mb-1">
-          Heure de fin
-        </label>
+      <div class="space-y-1.5">
+        <label for="hour_end" class="text-sm font-medium text-zinc-950">Heure fin</label>
         <select
           id="hour_end"
           name="hour_end"
           bind:value={hourEnd}
-          class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-slate-900
-                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+          class="w-full h-9 rounded-md border border-zinc-200 bg-white px-3 text-sm text-zinc-950
+                 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-1"
         >
           {#each hourOptions as h}
             <option value={h}>{h}h00</option>
@@ -120,32 +119,28 @@
       </div>
     </div>
 
-    <!-- Weekend toggle -->
-    <div class="flex items-center gap-3">
+    <label class="flex items-center gap-2.5 cursor-pointer">
       <input
         id="include_weekends"
         name="include_weekends"
         type="checkbox"
         bind:checked={includeWeekends}
-        class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+        class="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus-visible:ring-zinc-950"
       />
-      <label for="include_weekends" class="text-sm text-slate-700">
-        Inclure les week-ends
-      </label>
-    </div>
+      <span class="text-sm text-zinc-700">Inclure les week-ends</span>
+    </label>
 
-    <!-- Preview -->
     {#if dateStart && dateEnd}
-      <div class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-600">
-        Créneaux de <strong>{hourStart}h</strong> à <strong>{hourEnd}h</strong>
-        par tranche d'1 heure, du <strong>{dateStart}</strong> au <strong>{dateEnd}</strong>
-        {#if !includeWeekends} (jours ouvrés seulement){/if}.
+      <div class="rounded-md bg-zinc-50 border border-zinc-200 px-4 py-3 text-xs text-zinc-500">
+        Créneaux de <strong class="text-zinc-700">{hourStart}h</strong> à <strong class="text-zinc-700">{hourEnd}h</strong>,
+        du <strong class="text-zinc-700">{dateStart}</strong> au <strong class="text-zinc-700">{dateEnd}</strong>
+        {#if !includeWeekends}<span> · jours ouvrés</span>{/if}
       </div>
     {/if}
 
     <button
       type="submit"
-      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors"
+      class="w-full h-9 bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-medium rounded-md shadow-sm"
     >
       Créer le créneau
     </button>

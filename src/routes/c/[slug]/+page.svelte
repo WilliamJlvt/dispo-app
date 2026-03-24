@@ -8,19 +8,21 @@
     heatmapColor,
     eventOverlapsSlot,
     formatDate,
+    formatDateParts,
     formatHour
   } from '$lib/utils';
 
   let { data } = $props<{ data: PageData }>();
 
-  const { creneau, user, calendarEvents: initialCalendarEvents } = data;
+  const creneau = $derived(data.creneau);
+  const user = $derived(data.user);
+  const initialCalendarEvents = $derived((data.calendarEvents ?? []) as CalendarEvent[]);
+  const dates = $derived(getDatesInRange(creneau.date_start, creneau.date_end, creneau.include_weekends));
+  const hours = $derived(getHours(creneau.hour_start, creneau.hour_end));
 
-  const dates = getDatesInRange(creneau.date_start, creneau.date_end, creneau.include_weekends);
-  const hours = getHours(creneau.hour_start, creneau.hour_end);
-
-  let serverResponses = $state<Record<string, UserResponse>>(creneau.responses);
+  let serverResponses = $state<Record<string, UserResponse>>({ ...data.creneau.responses });
   let mySlots = $state<Record<string, number[]>>(
-    creneau.responses[user.email]?.slots ?? {}
+    { ...(data.creneau.responses[data.user.email]?.slots ?? {}) }
   );
   let saving = $state(false);
   let saveTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -124,33 +126,35 @@
   <title>{creneau.title} - Créneaux</title>
 </svelte:head>
 
-<div class="max-w-5xl mx-auto px-4 py-6">
+<div class="max-w-5xl mx-auto px-4 py-8">
   <!-- Header -->
   <div class="mb-6">
-    <a href="/" class="text-sm text-slate-500 hover:text-slate-700 transition-colors">
-      &larr; Retour
+    <a href="/" class="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-950">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+      Retour
     </a>
   </div>
 
   <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
     <div>
-      <h1 class="text-2xl font-bold text-[#0d1b2a]">{creneau.title}</h1>
-      <p class="text-sm text-slate-500 mt-1">
-        {formatDate(creneau.date_start)} &rarr; {formatDate(creneau.date_end)}
-        &middot; {creneau.hour_start}h&ndash;{creneau.hour_end}h
-        &middot; {participants.length} participant{participants.length !== 1 ? 's' : ''}
+      <h1 class="text-xl font-semibold text-zinc-950">{creneau.title}</h1>
+      <p class="text-sm text-zinc-500 mt-1">
+        {formatDate(creneau.date_start)} → {formatDate(creneau.date_end)}
+        · {creneau.hour_start}h–{creneau.hour_end}h
+        · <span class="text-zinc-700 font-medium">{participants.length}</span> participant{participants.length !== 1 ? 's' : ''}
       </p>
     </div>
-    <div class="flex items-center gap-2 flex-shrink-0">
+    <div class="flex items-center gap-3 flex-shrink-0">
       {#if saving}
-        <span class="text-xs text-slate-400 animate-pulse">Sauvegarde...</span>
+        <span class="text-xs text-zinc-400 animate-pulse">Sauvegarde…</span>
       {:else}
-        <span class="text-xs text-slate-300">Sauvegardé</span>
+        <span class="text-xs text-zinc-300">Sauvegardé</span>
       {/if}
       <button
         onclick={copyLink}
-        class="text-sm border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900
-               px-3 py-1.5 rounded-lg transition-colors"
+        class="h-8 text-sm border border-zinc-200 hover:bg-zinc-50 text-zinc-600 hover:text-zinc-950 px-3 rounded-md"
       >
         {copied ? 'Copié !' : 'Copier le lien'}
       </button>
@@ -158,102 +162,94 @@
   </div>
 
   <!-- Legend -->
-  <div class="flex flex-wrap items-center gap-4 mb-4 text-xs text-slate-500">
+  <div class="flex flex-wrap items-center gap-4 mb-4 text-xs text-zinc-400">
     <div class="flex items-center gap-1.5">
-      <div class="w-4 h-4 rounded border-2 border-blue-500 bg-white"></div>
+      <div class="w-3.5 h-3.5 rounded-sm ring-2 ring-blue-500 bg-white"></div>
       <span>Votre sélection</span>
     </div>
     <div class="flex items-center gap-1.5">
-      <div class="w-4 h-4 rounded relative bg-slate-100 border border-slate-200">
-        <div class="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-orange-400"></div>
+      <div class="w-3.5 h-3.5 rounded-sm bg-zinc-100 border border-zinc-200 relative">
+        <div class="absolute top-0.5 right-0.5 w-1 h-1 rounded-full bg-orange-400"></div>
       </div>
-      <span>Événement Google Calendar</span>
+      <span>Agenda Google</span>
     </div>
-    <div class="flex items-center gap-2">
-      <div
-        class="w-4 h-4 rounded border border-slate-200"
-        style="background-color: #f8fafc"
-      ></div>
-      <span>0%</span>
-      <div
-        class="w-4 h-4 rounded"
-        style="background-color: rgb(119,133,149)"
-      ></div>
-      <span>50%</span>
-      <div
-        class="w-4 h-4 rounded"
-        style="background-color: #0d1b2a"
-      ></div>
-      <span>100%</span>
+    <div class="flex items-center gap-1.5">
+      <div class="flex gap-0.5">
+        {#each [0, 0.33, 0.66, 1] as r}
+          <div class="w-3.5 h-3.5 rounded-sm" style="background-color: {heatmapColor(r)}; border: 1px solid rgba(0,0,0,0.06)"></div>
+        {/each}
+      </div>
+      <span>0 → 100% disponibles</span>
     </div>
   </div>
 
   <!-- Grid -->
-  <div class="border border-slate-200 rounded-xl overflow-hidden mb-8">
+  <div class="rounded-xl border border-zinc-200 overflow-hidden mb-8 shadow-sm">
     <div class="overflow-x-auto">
-      <table class="border-collapse" style="min-width: max-content;">
+      <table class="border-collapse w-full" style="min-width: max-content;">
         <thead>
-          <tr>
-            <!-- Sticky hour column header -->
+          <tr class="bg-zinc-50">
             <th
-              class="sticky left-0 z-10 bg-white border-b border-r border-slate-200 px-3 py-2 text-xs font-medium text-slate-400 text-left"
-              style="min-width: 52px;"
-            >
-              Heure
-            </th>
+              class="sticky left-0 z-10 bg-zinc-50 border-b border-r border-zinc-200 px-3 py-3"
+              style="min-width: 56px;"
+            ></th>
             {#each dates as date}
+              {@const parts = formatDateParts(date)}
               <th
-                class="border-b border-r border-slate-200 px-2 py-2 text-xs font-medium text-slate-600 text-center whitespace-nowrap"
-                style="min-width: 80px;"
+                class="border-b border-r border-zinc-200 px-2 py-2.5 text-center whitespace-nowrap"
+                style="min-width: 84px;"
               >
-                {formatDate(date)}
+                <span class="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider">{parts.day}</span>
+                <span class="block text-sm font-semibold text-zinc-950 leading-tight">{parts.num} {parts.month}</span>
               </th>
             {/each}
           </tr>
         </thead>
         <tbody>
-          {#each hours as hour}
+          {#each hours as hour, hi}
             <tr>
-              <!-- Sticky hour label -->
               <td
-                class="sticky left-0 z-10 bg-white border-b border-r border-slate-200 px-3 text-xs font-medium text-slate-500 text-right"
-                style="min-width: 52px; min-height: 44px;"
+                class="sticky left-0 z-10 bg-white border-r border-zinc-200 px-3 text-right align-middle"
+                class:border-b={hi < hours.length - 1}
+                style="min-width: 56px; height: 52px; border-bottom-color: rgb(228 228 231);"
               >
-                {formatHour(hour)}
+                <span class="text-xs font-medium text-zinc-400">{formatHour(hour)}</span>
               </td>
-              {#each dates as date}
+              {#each dates as date, di}
                 {@const conv = getConvergence(date, hour)}
                 {@const mine = isMySlot(date, hour)}
                 {@const hasEvent = hasCalendarEvent(date, hour)}
+                <!-- svelte-ignore a11y_interactive_supports_focus -->
                 <td
-                  class="border-b border-r border-slate-200 relative cursor-pointer select-none
-                         transition-all duration-100"
-                  style="min-width: 80px; min-height: 44px; background-color: {heatmapColor(conv.ratio)};"
+                  class="relative cursor-pointer select-none group"
+                  class:border-b={hi < hours.length - 1}
+                  class:border-r={di < dates.length - 1}
+                  style="height: 52px; min-width: 84px; background-color: {heatmapColor(conv.ratio)}; border-color: rgba(0,0,0,0.07);"
                   onclick={() => toggleSlot(date, hour)}
-                  onkeydown={(e) => e.key === 'Enter' || e.key === ' ' ? toggleSlot(date, hour) : null}
+                  onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleSlot(date, hour)}
                   role="button"
                   tabindex="0"
-                  aria-label="{formatDate(date)} {formatHour(hour)} - {conv.count}/{conv.total}"
                   aria-pressed={mine}
                 >
-                  <!-- Blue ring if current user selected this slot -->
+                  <!-- Hover overlay -->
+                  <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
+
+                  <!-- Selection ring -->
                   {#if mine}
-                    <div
-                      class="absolute inset-0.5 rounded ring-2 ring-blue-500 ring-inset pointer-events-none"
-                    ></div>
+                    <div class="absolute inset-[3px] rounded-md ring-2 ring-blue-500 pointer-events-none"></div>
                   {/if}
-                  <!-- Orange dot if Google Calendar event -->
+
+                  <!-- Calendar dot -->
                   {#if hasEvent}
-                    <div
-                      class="absolute top-1 right-1 w-2 h-2 rounded-full bg-orange-400 pointer-events-none"
-                    ></div>
+                    <div class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 ring-1 ring-white pointer-events-none"></div>
                   {/if}
-                  <!-- Convergence count -->
-                  {#if conv.total > 0}
-                    <div
-                      class="absolute inset-0 flex items-center justify-center text-xs font-medium pointer-events-none {textColor(conv.ratio)}"
-                    >
-                      {conv.count}/{conv.total}
+
+                  <!-- Count (only when at least 1 person available) -->
+                  {#if conv.count > 0}
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span class="text-[11px] font-semibold tabular-nums {conv.ratio > 0.55 ? 'text-white/90' : 'text-zinc-600'}">
+                        {conv.count}<span class="opacity-50">/{conv.total}</span>
+                      </span>
                     </div>
                   {/if}
                 </td>
@@ -265,68 +261,57 @@
     </div>
   </div>
 
-  <!-- Participants -->
-  {#if participants.length > 0}
-    <div class="mb-8">
-      <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
-        Participants ({participants.length})
-      </h2>
-      <div class="flex flex-wrap gap-2">
-        {#each participants as email}
-          {@const resp = effectiveResponses[email]}
-          <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5">
-            <span class="text-sm text-slate-700">{resp.name}</span>
-            {#if email === user.email}
-              <span class="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Vous</span>
-            {/if}
-          </div>
-        {/each}
+  <!-- Participants + Best slots -->
+  <div class="grid gap-6 sm:grid-cols-2">
+    <!-- Participants -->
+    {#if participants.length > 0}
+      <div>
+        <h2 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">
+          Participants · {participants.length}
+        </h2>
+        <div class="flex flex-wrap gap-1.5">
+          {#each participants as email}
+            {@const resp = effectiveResponses[email]}
+            <div class="inline-flex items-center gap-1.5 h-7 rounded-full border border-zinc-200 bg-white px-3 text-xs">
+              <span class="text-zinc-700 font-medium">{resp.name}</span>
+              {#if email === user.email}
+                <span class="text-[10px] bg-zinc-900 text-white px-1.5 py-0.5 rounded-full">vous</span>
+              {/if}
+            </div>
+          {/each}
+        </div>
       </div>
-    </div>
-  {/if}
+    {/if}
 
-  <!-- Best slots -->
-  {#if bestSlots.length > 0}
+    <!-- Best slots -->
     <div>
-      <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+      <h2 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">
         Meilleurs créneaux
       </h2>
-      <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {#each bestSlots as slot, i}
-          <div
-            class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-4 py-3"
-          >
-            <div class="flex items-center gap-3">
-              <span
-                class="text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center"
-                style="background-color: {heatmapColor(slot.ratio)}; color: {slot.ratio > 0.55 ? 'white' : '#475569'}"
+      {#if bestSlots.length > 0}
+        <div class="space-y-1.5">
+          {#each bestSlots as slot, i}
+            <div class="flex items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50 px-3 py-2.5">
+              <div
+                class="w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-bold flex-shrink-0"
+                style="background-color: {heatmapColor(slot.ratio)}; color: {slot.ratio > 0.55 ? 'white' : '#52525b'}"
               >
                 {i + 1}
-              </span>
-              <div>
-                <div class="text-sm font-medium text-slate-800">
-                  {formatDate(slot.date)}
-                </div>
-                <div class="text-xs text-slate-500">
-                  {formatHour(slot.hour)}&ndash;{formatHour(slot.hour + 1)}
-                </div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <span class="text-sm font-medium text-zinc-950">{formatDate(slot.date)}</span>
+                <span class="text-xs text-zinc-400 ml-2">{formatHour(slot.hour)}–{formatHour(slot.hour + 1)}</span>
+              </div>
+              <div class="text-right flex-shrink-0">
+                <span class="text-sm font-semibold text-zinc-950">{slot.count}/{slot.total}</span>
+                <span class="text-xs text-zinc-400 ml-1">{Math.round(slot.ratio * 100)}%</span>
               </div>
             </div>
-            <div class="text-right">
-              <div class="text-sm font-semibold text-slate-800">
-                {slot.count}/{slot.total}
-              </div>
-              <div class="text-xs text-slate-400">
-                {Math.round(slot.ratio * 100)}%
-              </div>
-            </div>
-          </div>
-        {/each}
-      </div>
+          {/each}
+        </div>
+      {:else}
+        <p class="text-sm text-zinc-400">Cliquez sur des cellules pour indiquer vos disponibilités.</p>
+      {/if}
     </div>
-  {:else}
-    <div class="text-sm text-slate-400 text-center py-4">
-      Cliquez sur les cellules pour indiquer vos disponibilités.
-    </div>
-  {/if}
+  </div>
 </div>

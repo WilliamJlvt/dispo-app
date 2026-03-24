@@ -83,6 +83,18 @@ export function formatDate(dateStr: string): string {
 }
 
 /**
+ * Returns separate parts for a rich date header.
+ */
+export function formatDateParts(dateStr: string): { day: string; num: number; month: string } {
+  const d = new Date(dateStr + 'T00:00:00');
+  return {
+    day: FR_DAYS[d.getDay()],
+    num: d.getDate(),
+    month: FR_MONTHS[d.getMonth()]
+  };
+}
+
+/**
  * Formats an hour number as "10h", "14h", etc.
  */
 export function formatHour(hour: number): string {
