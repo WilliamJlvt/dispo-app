@@ -1,0 +1,25 @@
+services:
+  crenaux:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./data:/data
+    environment:
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - ORIGIN=${ORIGIN}
+      - DATA_DIR=/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.crenaux.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.crenaux.entrypoints=websecure"
+      - "traefik.http.routers.crenaux.tls.certresolver=letsencrypt"
+      - "traefik.http.services.crenaux.loadbalancer.server.port=3000"
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
