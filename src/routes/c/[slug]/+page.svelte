@@ -251,8 +251,6 @@
 								{@const conv = getConvergence(date, hour)}
 								{@const mine = isMySlot(date, hour)}
 								{@const slotEvents = getSlotCalendarEvents(date, hour)}
-								{@const othersCount = mine ? conv.count - 1 : conv.count}
-
 								<td
 									class="group/cell relative cursor-pointer select-none border-l border-zinc-200"
 									style="height: 52px; min-width: 80px;
