@@ -120,6 +120,15 @@
 
 <svelte:head>
 	<title>{creneau.title} - Créneaux</title>
+	<meta property="og:title" content="{creneau.title}" />
+	<meta property="og:description" content="{Object.keys(creneau.responses).length} participant{Object.keys(creneau.responses).length !== 1 ? 's' : ''} · {creneau.date_start} → {creneau.date_end}" />
+	<meta property="og:image" content="{data.origin}/c/{creneau.id}/og.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="{creneau.title}" />
+	<meta name="twitter:image" content="{data.origin}/c/{creneau.id}/og.png" />
 </svelte:head>
 
 <div class="mx-auto max-w-5xl px-4 py-8">

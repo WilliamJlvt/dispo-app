@@ -4,7 +4,7 @@ import { getCreneau } from '$lib/server/data';
 import { getCalendarEvents } from '$lib/server/calendar';
 import type { CalendarEvent } from '$lib/types';
 
-export const load: PageServerLoad = async ({ params, locals }) => {
+export const load: PageServerLoad = async ({ params, locals, url }) => {
 	if (!locals.user) {
 		redirect(302, '/');
 	}
@@ -27,6 +27,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	return {
 		creneau,
 		calendarEvents,
-		user: locals.user
+		user: locals.user,
+		origin: url.origin
 	};
 };
