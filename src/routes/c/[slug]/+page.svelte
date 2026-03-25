@@ -432,12 +432,12 @@
 									{/if}
 
 									<!-- Selection ring -->
-									{#if hoveredHasSlot || mine}
+									{#if hoveredEmail ? hoveredHasSlot : mine}
 										<div
 											class="pointer-events-none absolute"
-											style="inset: 2px; border-radius: 5px; border: 3px solid {hoveredHasSlot
-												? '#7c3aed'
-												: '#3b82f6'};"
+											style="inset: 2px; border-radius: 5px; border: 3px solid #3b82f6;"
+
+
 										></div>
 									{/if}
 
