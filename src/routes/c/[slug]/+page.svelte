@@ -28,7 +28,9 @@
 		untrack(() => ({ ...data.creneau.responses }))
 	);
 	let mySlots = $state<Record<string, number[]>>(
-		untrack(() => ({ ...(data.creneau.responses[data.user.email]?.slots ?? {}) }))
+		untrack(() => ({
+			...(data.user ? (data.creneau.responses[data.user.email]?.slots ?? {}) : {})
+		}))
 	);
 	let saving = $state(false);
 	let saveTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -37,11 +39,15 @@
 	// Effective responses: server data merged with current user's live selections
 	let effectiveResponses = $derived<Record<string, UserResponse>>({
 		...serverResponses,
-		[user.email]: {
-			name: user.name,
-			updated_at: new Date().toISOString(),
-			slots: mySlots
-		}
+		...(user
+			? {
+					[user.email]: {
+						name: user.name,
+						updated_at: new Date().toISOString(),
+						slots: mySlots
+					}
+				}
+			: {})
 	});
 
 	let participants = $derived(Object.keys(effectiveResponses));
@@ -71,6 +77,7 @@
 	}
 
 	function toggleSlot(date: string, hour: number) {
+		if (!user) return;
 		const current = mySlots[date] ?? [];
 		if (current.includes(hour)) {
 			mySlots = { ...mySlots, [date]: current.filter((h) => h !== hour) };
@@ -196,18 +203,20 @@
 			</p>
 		</div>
 		<div class="flex flex-shrink-0 items-center gap-3">
-			{#if saving}
-				<span class="animate-pulse text-xs text-zinc-400">Sauvegarde…</span>
-			{:else}
-				<span class="text-xs text-zinc-300">Sauvegardé</span>
-			{/if}
-			{#if user.email === creneau.created_by}
-				<a
-					href="/c/{creneau.id}/modifier"
-					class="inline-flex h-8 items-center rounded-md border border-zinc-200 px-3 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950"
-				>
-					Modifier
-				</a>
+			{#if user}
+				{#if saving}
+					<span class="animate-pulse text-xs text-zinc-400">Sauvegarde…</span>
+				{:else}
+					<span class="text-xs text-zinc-300">Sauvegardé</span>
+				{/if}
+				{#if user.email === creneau.created_by}
+					<a
+						href="/c/{creneau.id}/modifier"
+						class="inline-flex h-8 items-center rounded-md border border-zinc-200 px-3 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950"
+					>
+						Modifier
+					</a>
+				{/if}
 			{/if}
 			<button
 				onclick={copyLink}
@@ -217,6 +226,36 @@
 			</button>
 		</div>
 	</div>
+
+	<!-- Login CTA for anonymous visitors -->
+	{#if !user}
+		<div
+			class="mb-6 flex items-center justify-between rounded-xl border border-blue-100 bg-blue-50 px-4 py-3"
+		>
+			<div class="flex items-center gap-2.5">
+				<svg
+					class="h-4 w-4 text-blue-500"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					stroke-width="2"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+					/>
+				</svg>
+				<span class="text-sm text-blue-700">Connecte-toi pour indiquer tes disponibilités</span>
+			</div>
+			<a
+				href="/auth/google?redirectTo={$page.url.pathname}"
+				class="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+			>
+				Connexion
+			</a>
+		</div>
+	{/if}
 
 	<!-- Legend -->
 	<div class="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-zinc-400">
