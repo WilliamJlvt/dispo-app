@@ -169,17 +169,10 @@
 	<div class="mb-4 flex flex-wrap items-center gap-4 text-xs text-zinc-400">
 		<div class="flex items-center gap-1.5">
 			<div
-				class="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-zinc-200 bg-white shadow-sm"
+				class="relative h-3.5 w-5 overflow-hidden rounded-sm border border-blue-300"
+				style="background-color: #f9fafb; background-image: repeating-linear-gradient(45deg, rgba(59,130,246,0.18) 0px, rgba(59,130,246,0.18) 2px, transparent 2px, transparent 9px);"
 			>
-				<svg
-					class="h-2 w-2 text-blue-600"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-					stroke-width="3.5"
-				>
-					<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-				</svg>
+				<div class="absolute inset-y-0 left-0 w-[3px] bg-blue-500"></div>
 			</div>
 			<span>Votre sélection</span>
 		</div>
@@ -244,9 +237,7 @@
 									class="group relative cursor-pointer select-none"
 									class:border-b={hi < hours.length - 1}
 									class:border-r={di < dates.length - 1}
-									style="height: 52px; min-width: 84px; background-color: {heatmapColor(
-										conv.ratio
-									)}; border-color: rgba(0,0,0,0.07);"
+									style="height: 52px; min-width: 84px; background-color: {heatmapColor(conv.ratio)}; background-image: {mine ? 'repeating-linear-gradient(45deg, rgba(59,130,246,0.18) 0px, rgba(59,130,246,0.18) 2px, transparent 2px, transparent 9px)' : 'none'}; border-color: rgba(0,0,0,0.07);"
 									onclick={() => toggleSlot(date, hour)}
 									onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleSlot(date, hour)}
 									role="button"
@@ -258,21 +249,9 @@
 										class="pointer-events-none absolute inset-0 bg-white opacity-0 transition-opacity group-hover:opacity-10"
 									></div>
 
-									<!-- Selection check -->
+									<!-- Selection indicator: left border accent -->
 									{#if mine}
-										<div
-											class="pointer-events-none absolute top-1.5 left-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-white shadow-sm"
-										>
-											<svg
-												class="h-2.5 w-2.5 text-blue-600"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
-												stroke-width="3.5"
-											>
-												<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-											</svg>
-										</div>
+										<div class="pointer-events-none absolute inset-y-0 left-0 w-[3px] rounded-l bg-blue-500"></div>
 									{/if}
 
 									<!-- Calendar events -->
