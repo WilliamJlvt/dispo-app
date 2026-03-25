@@ -1,6 +1,13 @@
 import { redirect, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { getConfig, saveConfig, listCrenaux, deleteCreneau, getCreneau, isAdmin } from '$lib/server/data';
+import {
+	getConfig,
+	saveConfig,
+	listCrenaux,
+	deleteCreneau,
+	getCreneau,
+	isAdmin
+} from '$lib/server/data';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user || !isAdmin(locals.user.email)) {

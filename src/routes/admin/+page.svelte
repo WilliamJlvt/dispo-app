@@ -41,7 +41,9 @@
 				<p class="mt-0.5 text-xs text-zinc-500">Accès à cette page admin. Un email par ligne.</p>
 			</div>
 			{#if form?.success && form?.target === 'admins'}
-				<div class="mb-3 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-700">
+				<div
+					class="mb-3 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-700"
+				>
 					Sauvegardé.
 				</div>
 			{/if}
@@ -54,7 +56,10 @@
 					class="w-full resize-y rounded-md border border-zinc-200 bg-white px-3 py-2 font-mono text-sm text-zinc-950 placeholder-zinc-400 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-1"
 				></textarea>
 				<div class="mt-2 flex justify-end">
-					<button type="submit" class="h-8 rounded-md bg-zinc-900 px-4 text-sm font-medium text-white hover:bg-zinc-800">
+					<button
+						type="submit"
+						class="h-8 rounded-md bg-zinc-900 px-4 text-sm font-medium text-white hover:bg-zinc-800"
+					>
 						Sauvegarder
 					</button>
 				</div>
@@ -66,11 +71,15 @@
 			<div class="mb-3">
 				<h2 class="text-sm font-semibold text-zinc-950">Emails autorisés</h2>
 				<p class="mt-0.5 text-xs text-zinc-500">
-					Qui peut se connecter. Wildcards : <code class="rounded bg-zinc-100 px-1 font-mono">*@domaine.com</code>
+					Qui peut se connecter. Wildcards : <code class="rounded bg-zinc-100 px-1 font-mono"
+						>*@domaine.com</code
+					>
 				</p>
 			</div>
 			{#if form?.success && form?.target === 'emails'}
-				<div class="mb-3 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-700">
+				<div
+					class="mb-3 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-700"
+				>
 					Sauvegardé.
 				</div>
 			{/if}
@@ -83,7 +92,10 @@
 					class="w-full resize-y rounded-md border border-zinc-200 bg-white px-3 py-2 font-mono text-sm text-zinc-950 placeholder-zinc-400 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-1"
 				></textarea>
 				<div class="mt-2 flex justify-end">
-					<button type="submit" class="h-8 rounded-md bg-zinc-900 px-4 text-sm font-medium text-white hover:bg-zinc-800">
+					<button
+						type="submit"
+						class="h-8 rounded-md bg-zinc-900 px-4 text-sm font-medium text-white hover:bg-zinc-800"
+					>
 						Sauvegarder
 					</button>
 				</div>

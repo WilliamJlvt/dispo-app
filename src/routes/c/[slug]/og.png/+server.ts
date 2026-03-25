@@ -56,9 +56,7 @@ export const GET: RequestHandler = async ({ params }) => {
 	const bestLabel = best
 		? `${formatDate(best.date)} · ${formatHour(best.hour)}–${formatHour(best.hour + 1)}`
 		: null;
-	const bestScore = best
-		? `${best.count}/${Object.keys(creneau.responses).length} dispo`
-		: null;
+	const bestScore = best ? `${best.count}/${Object.keys(creneau.responses).length} dispo` : null;
 
 	const svg = await satori(
 		{
@@ -72,7 +70,7 @@ export const GET: RequestHandler = async ({ params }) => {
 					backgroundColor: '#09090b',
 					padding: '56px 64px',
 					fontFamily: 'Inter',
-					position: 'relative',
+					position: 'relative'
 				},
 				children: [
 					// Top: brand
@@ -83,7 +81,7 @@ export const GET: RequestHandler = async ({ params }) => {
 								display: 'flex',
 								alignItems: 'center',
 								gap: '10px',
-								marginBottom: '48px',
+								marginBottom: '48px'
 							},
 							children: [
 								{
@@ -93,10 +91,10 @@ export const GET: RequestHandler = async ({ params }) => {
 											width: '10px',
 											height: '10px',
 											borderRadius: '50%',
-											backgroundColor: '#22c55e',
+											backgroundColor: '#22c55e'
 										},
-										children: '',
-									},
+										children: ''
+									}
 								},
 								{
 									type: 'div',
@@ -105,13 +103,13 @@ export const GET: RequestHandler = async ({ params }) => {
 											color: '#71717a',
 											fontSize: '18px',
 											fontWeight: 400,
-											letterSpacing: '0.05em',
+											letterSpacing: '0.05em'
 										},
-										children: 'Créneaux',
-									},
-								},
-							],
-						},
+										children: 'Créneaux'
+									}
+								}
+							]
+						}
 					},
 
 					// Title
@@ -124,10 +122,10 @@ export const GET: RequestHandler = async ({ params }) => {
 								fontWeight: 700,
 								lineHeight: 1.1,
 								maxWidth: '900px',
-								marginBottom: '20px',
+								marginBottom: '20px'
 							},
-							children: creneau.title,
-						},
+							children: creneau.title
+						}
 					},
 
 					// Date range
@@ -138,10 +136,10 @@ export const GET: RequestHandler = async ({ params }) => {
 								color: '#52525b',
 								fontSize: '24px',
 								fontWeight: 400,
-								marginBottom: '48px',
+								marginBottom: '48px'
 							},
-							children: `${formatDate(creneau.date_start)} → ${formatDate(creneau.date_end)} · ${creneau.hour_start}h–${creneau.hour_end}h`,
-						},
+							children: `${formatDate(creneau.date_start)} → ${formatDate(creneau.date_end)} · ${creneau.hour_start}h–${creneau.hour_end}h`
+						}
 					},
 
 					// Bottom row: best slot + participants
@@ -152,7 +150,7 @@ export const GET: RequestHandler = async ({ params }) => {
 								display: 'flex',
 								alignItems: 'flex-end',
 								gap: '24px',
-								marginTop: 'auto',
+								marginTop: 'auto'
 							},
 							children: [
 								// Best slot card
@@ -169,7 +167,7 @@ export const GET: RequestHandler = async ({ params }) => {
 														borderRadius: '16px',
 														padding: '24px 32px',
 														borderLeft: `6px solid ${bestColor}`,
-														flex: '1',
+														flex: '1'
 													},
 													children: [
 														{
@@ -180,10 +178,10 @@ export const GET: RequestHandler = async ({ params }) => {
 																	fontSize: '14px',
 																	fontWeight: 400,
 																	textTransform: 'uppercase',
-																	letterSpacing: '0.1em',
+																	letterSpacing: '0.1em'
 																},
-																children: 'Meilleur créneau',
-															},
+																children: 'Meilleur créneau'
+															}
 														},
 														{
 															type: 'div',
@@ -191,7 +189,7 @@ export const GET: RequestHandler = async ({ params }) => {
 																style: {
 																	display: 'flex',
 																	alignItems: 'center',
-																	gap: '16px',
+																	gap: '16px'
 																},
 																children: [
 																	{
@@ -200,10 +198,10 @@ export const GET: RequestHandler = async ({ params }) => {
 																			style: {
 																				color: '#fafafa',
 																				fontSize: '30px',
-																				fontWeight: 700,
+																				fontWeight: 700
 																			},
-																			children: bestLabel,
-																		},
+																			children: bestLabel
+																		}
 																	},
 																	{
 																		type: 'div',
@@ -214,17 +212,17 @@ export const GET: RequestHandler = async ({ params }) => {
 																				fontSize: '16px',
 																				fontWeight: 700,
 																				padding: '4px 12px',
-																				borderRadius: '999px',
+																				borderRadius: '999px'
 																			},
-																			children: bestScore ?? '',
-																		},
-																	},
-																],
-															},
-														},
-													],
-												},
-											},
+																			children: bestScore ?? ''
+																		}
+																	}
+																]
+															}
+														}
+													]
+												}
+											}
 										]
 									: [
 											{
@@ -236,17 +234,17 @@ export const GET: RequestHandler = async ({ params }) => {
 														backgroundColor: '#18181b',
 														borderRadius: '16px',
 														padding: '24px 32px',
-														flex: '1',
+														flex: '1'
 													},
 													children: {
 														type: 'div',
 														props: {
 															style: { color: '#52525b', fontSize: '24px' },
-															children: 'Aucune réponse pour l\'instant',
-														},
-													},
-												},
-											},
+															children: "Aucune réponse pour l'instant"
+														}
+													}
+												}
+											}
 										]),
 
 								// Participants badge
@@ -262,39 +260,39 @@ export const GET: RequestHandler = async ({ params }) => {
 											borderRadius: '16px',
 											padding: '24px 32px',
 											minWidth: '140px',
-											gap: '4px',
+											gap: '4px'
 										},
 										children: [
 											{
 												type: 'div',
 												props: {
 													style: { color: '#fafafa', fontSize: '36px', fontWeight: 700 },
-													children: String(participantCount),
-												},
+													children: String(participantCount)
+												}
 											},
 											{
 												type: 'div',
 												props: {
 													style: { color: '#52525b', fontSize: '15px' },
-													children: participantCount !== 1 ? 'participants' : 'participant',
-												},
-											},
-										],
-									},
-								},
-							],
-						},
-					},
-				],
-			},
+													children: participantCount !== 1 ? 'participants' : 'participant'
+												}
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				]
+			}
 		},
 		{
 			width: 1200,
 			height: 630,
 			fonts: [
 				{ name: 'Inter', data: fontRegular, weight: 400, style: 'normal' },
-				{ name: 'Inter', data: fontBold, weight: 700, style: 'normal' },
-			],
+				{ name: 'Inter', data: fontBold, weight: 700, style: 'normal' }
+			]
 		}
 	);
 
@@ -304,7 +302,7 @@ export const GET: RequestHandler = async ({ params }) => {
 	return new Response(png, {
 		headers: {
 			'Content-Type': 'image/png',
-			'Cache-Control': 'public, max-age=3600, s-maxage=3600',
-		},
+			'Cache-Control': 'public, max-age=3600, s-maxage=3600'
+		}
 	});
 };
