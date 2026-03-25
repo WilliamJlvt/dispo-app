@@ -112,6 +112,33 @@
 		})()
 	);
 
+	// Tooltip for calendar event badges
+	let tooltipData = $state<{ lines: string[] } | null>(null);
+	let tooltipPos = $state({ x: 0, y: 0 });
+
+	function formatEventTime(ev: CalendarEvent): string {
+		if (ev.allDay) return 'Toute la journée';
+		const start = new Date(ev.start);
+		const end = new Date(ev.end);
+		const fmt = (d: Date) =>
+			d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+		return `${fmt(start)} – ${fmt(end)}`;
+	}
+
+	function showTooltip(e: MouseEvent, events: CalendarEvent[]) {
+		const lines = events.flatMap((ev) => [ev.summary, formatEventTime(ev)]);
+		tooltipData = { lines };
+		tooltipPos = { x: e.clientX, y: e.clientY };
+	}
+
+	function moveTooltip(e: MouseEvent) {
+		if (tooltipData) tooltipPos = { x: e.clientX, y: e.clientY };
+	}
+
+	function hideTooltip() {
+		tooltipData = null;
+	}
+
 	async function copyLink() {
 		await navigator.clipboard.writeText(window.location.href);
 		copied = true;
@@ -274,8 +301,10 @@
 									<div class="mt-1.5 flex flex-col gap-0.5">
 										{#each dayEvents as ev (ev.id)}
 											<div
-												class="truncate rounded bg-amber-400/90 px-1 py-px text-[9px] font-semibold leading-tight text-white"
-												title={ev.summary}
+												class="truncate rounded bg-amber-400/90 px-1 py-px text-[9px] font-semibold leading-tight text-white cursor-default"
+												onmouseenter={(e) => showTooltip(e, [ev])}
+												onmousemove={moveTooltip}
+												onmouseleave={hideTooltip}
 											>
 												{ev.summary}
 											</div>
@@ -346,8 +375,10 @@
 									<!-- Calendar events: small badge top-right -->
 									{#if slotEvents.length > 0}
 										<div
-											class="pointer-events-none absolute top-1 right-1 flex flex-col items-end gap-0.5"
-											title={slotEvents.map((e) => e.summary).join(', ')}
+											class="absolute top-1 right-1 flex flex-col items-end gap-0.5"
+											onmouseenter={(e) => { e.stopPropagation(); showTooltip(e, slotEvents); }}
+											onmousemove={(e) => { e.stopPropagation(); moveTooltip(e); }}
+											onmouseleave={hideTooltip}
 										>
 											{#each slotEvents.slice(0, 1) as ev (ev.id)}
 												<div
@@ -471,3 +502,19 @@
 		</div>
 	</div>
 </div>
+
+<!-- Fixed tooltip for calendar event badges -->
+{#if tooltipData}
+	<div
+		class="pointer-events-none fixed z-50 max-w-[220px] rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-lg"
+		style="left: {tooltipPos.x + 12}px; top: {tooltipPos.y - 8}px; transform: translateY(-100%);"
+	>
+		{#each tooltipData.lines as line, i (i)}
+			{#if i % 2 === 0}
+				<p class="text-xs font-semibold text-zinc-900 {i > 0 ? 'mt-1.5' : ''}">{line}</p>
+			{:else}
+				<p class="text-[11px] text-zinc-400">{line}</p>
+			{/if}
+		{/each}
+	</div>
+{/if}
