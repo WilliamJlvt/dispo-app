@@ -63,7 +63,7 @@ export function getHours(hourStart: number, hourEnd: number): number[] {
  * 0.5–1   => green-400 → green-800 (#166534)
  */
 export function heatmapColor(ratio: number): string {
-	if (ratio === 0) return '#f9fafb';
+	if (ratio === 0) return '#ffffff';
 
 	if (ratio <= 0.5) {
 		const t = ratio * 2;

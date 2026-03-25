@@ -120,6 +120,9 @@
 		})()
 	);
 
+	// Participant hover highlight
+	let hoveredEmail = $state<string | null>(null);
+
 	// Tooltip for calendar event badges
 	let tooltipData = $state<{ lines: string[] } | null>(null);
 	let tooltipPos = $state({ x: 0, y: 0 });
@@ -329,17 +332,17 @@
 	</div>
 
 	<!-- Grid -->
-	<div class="mb-8 overflow-hidden rounded-xl border border-zinc-200 shadow-sm">
+	<div class="mb-8 overflow-hidden rounded-xl">
 		<div class="overflow-x-auto">
-			<table class="w-full border-collapse" style="min-width: max-content;">
+			<table class="w-full" style="min-width: max-content; border-collapse: collapse;">
 				<thead>
-					<tr class="border-b border-zinc-200 bg-zinc-50">
+					<tr class="bg-white">
 						<!-- Empty corner cell -->
-						<th class="sticky left-0 z-10 bg-zinc-50" style="min-width: 64px;"></th>
+						<th class="sticky left-0 z-10 bg-white border-b border-r border-zinc-200" style="min-width: 64px;"></th>
 						{#each dates as date (date)}
 							{@const parts = formatDateParts(date)}
 							{@const dayEvents = getAllDayEvents(date)}
-							<th class="border-l border-zinc-200 px-2 py-2 text-center" style="min-width: 80px;">
+							<th class="bg-white px-2 py-2 text-center border-b border-r border-zinc-200" style="min-width: 80px;">
 								<span
 									class="block text-[10px] font-semibold tracking-widest text-zinc-400 uppercase"
 									>{parts.day}</span
@@ -368,14 +371,11 @@
 				</thead>
 				<tbody>
 					{#each hours as hour, hi (hour)}
-						<tr class="group/row" class:border-t={hi > 0}>
+						<tr class="group/row">
 							<!-- Time label: shows the range "10h → 11h" -->
 							<td
-								class="sticky left-0 z-10 border-r border-zinc-200 bg-white select-none"
-								style="width: 64px; min-width: 64px; height: 52px; border-bottom: {hi <
-								hours.length - 1
-									? '1px solid rgba(0,0,0,0.06)'
-									: 'none'};"
+								class="sticky left-0 z-10 bg-white select-none border-b border-r border-zinc-200"
+								style="width: 64px; min-width: 64px; height: 52px; border-radius: 6px;"
 							>
 								<div class="flex h-full flex-col items-end justify-between px-3 py-1.5">
 									<span class="text-xs leading-none font-semibold text-zinc-600"
@@ -389,14 +389,15 @@
 								{@const conv = getConvergence(date, hour)}
 								{@const mine = isMySlot(date, hour)}
 								{@const slotEvents = getSlotCalendarEvents(date, hour)}
+								{@const hoveredHasSlot = hoveredEmail
+									? (effectiveResponses[hoveredEmail]?.slots[date]?.includes(hour) ?? false)
+									: false}
 								<td
-									class="group/cell relative border-l border-zinc-200 select-none"
+									class="group/cell relative select-none border-b border-r border-zinc-100"
 									class:cursor-pointer={!!user}
 									class:cursor-default={!user}
-									style="height: 52px; min-width: 80px;
-										background-color: {heatmapColor(conv.ratio)};
-										border-bottom: {hi < hours.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none'};
-										box-shadow: {mine ? 'inset 0 0 0 3px #3b82f6' : 'none'};"
+									style="height: 52px; min-width: 80px; border-radius: 6px; overflow: hidden;
+										background-color: {heatmapColor(conv.ratio)};"
 									onclick={() => toggleSlot(date, hour)}
 									onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleSlot(date, hour)}
 									role="button"
@@ -407,6 +408,22 @@
 									<div
 										class="pointer-events-none absolute inset-0 bg-white opacity-0 transition-opacity duration-75 group-hover/cell:opacity-15"
 									></div>
+
+									<!-- Participant highlight overlay -->
+									{#if hoveredEmail}
+										<div
+											class="pointer-events-none absolute inset-0 transition-opacity duration-75"
+											style="background-color: {hoveredHasSlot ? 'transparent' : 'rgba(255,255,255,0.72)'}"
+										></div>
+									{/if}
+
+									<!-- Selection ring -->
+									{#if hoveredHasSlot || mine}
+										<div
+											class="pointer-events-none absolute"
+											style="inset: 3px; border-radius: 4px; border: 2.5px solid {hoveredHasSlot ? '#7c3aed' : '#3b82f6'};"
+										></div>
+									{/if}
 
 									<!-- My slot: filled blue dot top-left -->
 									{#if mine}
@@ -478,16 +495,16 @@
 					{/each}
 
 					<!-- Final time boundary -->
-					<tr class="border-t border-zinc-200">
+					<tr>
 						<td
-							class="sticky left-0 z-10 border-r border-zinc-200 bg-white px-3 py-1 text-right"
-							style="width: 64px; min-width: 64px;"
+							class="sticky left-0 z-10 bg-white px-3 py-1 text-right border-r border-zinc-200"
+							style="width: 64px; min-width: 64px; border-radius: 6px;"
 						>
 							<span class="text-xs font-semibold text-zinc-600">{formatHour(creneau.hour_end)}</span
 							>
 						</td>
 						{#each dates as date2 (date2)}
-							<td class="border-l border-zinc-200 bg-white" style="height: 8px; min-width: 80px;"
+							<td class="bg-white" style="height: 8px; min-width: 80px; border-radius: 6px;"
 							></td>
 						{/each}
 					</tr>
@@ -508,7 +525,14 @@
 					{#each participants as email (email)}
 						{@const resp = effectiveResponses[email]}
 						<div
-							class="inline-flex h-7 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs"
+							role="presentation"
+							class="inline-flex h-7 cursor-default items-center gap-1.5 rounded-full border px-3 text-xs transition-all duration-100"
+							class:border-violet-400={hoveredEmail === email}
+							class:bg-violet-50={hoveredEmail === email}
+							class:border-zinc-200={hoveredEmail !== email}
+							class:bg-white={hoveredEmail !== email}
+							onmouseenter={() => (hoveredEmail = email)}
+							onmouseleave={() => (hoveredEmail = null)}
 						>
 							<span class="font-medium text-zinc-700">{resp.name}</span>
 							{#if user && email === user.email}
@@ -531,7 +555,7 @@
 				<div class="space-y-1.5">
 					{#each bestSlots as slot, i (i)}
 						<div
-							class="flex items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50 px-3 py-2.5"
+							class="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white px-3 py-2.5"
 						>
 							<div
 								class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md text-[11px] font-bold"
