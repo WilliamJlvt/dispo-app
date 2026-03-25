@@ -2,6 +2,7 @@
 	import '../app.css';
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
+	import logo from '$lib/assets/logo.svg';
 
 	let { data, children } = $props<{ data: LayoutData & { isAdmin: boolean }; children: Snippet }>();
 </script>
@@ -9,7 +10,10 @@
 <div class="flex min-h-screen flex-col bg-white text-zinc-950">
 	<header class="sticky top-0 z-50 border-b border-zinc-200 bg-white">
 		<div class="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-			<a href="/" class="text-sm font-semibold tracking-tight hover:text-zinc-600"> Créneaux </a>
+			<a href="/" class="flex items-center gap-2.5 opacity-90 hover:opacity-100">
+				<img src={logo} alt="" class="h-8 w-auto" />
+				<span class="text-sm font-semibold tracking-tight text-zinc-950">Créneaux</span>
+			</a>
 			<nav class="flex items-center gap-1">
 				{#if data.user}
 					<a

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { formatDate } from '$lib/utils';
+	import logo from '$lib/assets/logo.svg';
 
 	let { data } = $props<{ data: PageData }>();
 </script>
@@ -20,18 +21,10 @@
 {#if !data.user}
 	<div class="mx-auto max-w-xl px-4 py-24 text-center">
 		<div class="mb-8">
-			<div
-				class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900 text-white"
-			>
-				<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-					/>
-				</svg>
+			<div class="mb-6 flex items-center justify-center gap-3">
+				<img src={logo} alt="" class="h-14 w-auto" />
+				<span class="text-4xl font-bold tracking-tight text-zinc-950">Créneaux</span>
 			</div>
-			<h1 class="mb-3 text-3xl font-bold tracking-tight text-zinc-950">Créneaux</h1>
 			<p class="text-base leading-relaxed text-zinc-500">
 				Planification collaborative par disponibilités.<br />
 				Chacun coche ses créneaux libres, la heatmap révèle les meilleurs moments.
