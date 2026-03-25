@@ -22,9 +22,7 @@ export async function getCalendarEvents(
 		// If we have a refresh token, use it only — the library fetches a fresh access token.
 		// Passing an expired access_token without expiry_date causes the library to use it directly → 401.
 		auth.setCredentials(
-			refreshToken
-				? { refresh_token: refreshToken }
-				: { access_token: accessToken }
+			refreshToken ? { refresh_token: refreshToken } : { access_token: accessToken }
 		);
 
 		const calendar = googleApis.calendar({ version: 'v3', auth });

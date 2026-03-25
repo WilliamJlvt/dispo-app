@@ -20,16 +20,16 @@ Pas de compte à créer, pas de base de données — juste Google OAuth pour s'a
 
 ## Stack
 
-| | |
-|---|---|
-| **Framework** | SvelteKit (Svelte 5 runes) |
-| **Runtime** | Bun |
-| **Auth** | Google OAuth2 via Arctic, sessions JWT |
-| **Storage** | Fichiers YAML (pas de DB) |
-| **Styles** | Tailwind CSS v4 |
-| **Temps réel** | Server-Sent Events |
-| **OG images** | Satori + resvg |
-| **Déploiement** | Docker + Traefik |
+|                 |                                        |
+| --------------- | -------------------------------------- |
+| **Framework**   | SvelteKit (Svelte 5 runes)             |
+| **Runtime**     | Bun                                    |
+| **Auth**        | Google OAuth2 via Arctic, sessions JWT |
+| **Storage**     | Fichiers YAML (pas de DB)              |
+| **Styles**      | Tailwind CSS v4                        |
+| **Temps réel**  | Server-Sent Events                     |
+| **OG images**   | Satori + resvg                         |
+| **Déploiement** | Docker + Traefik                       |
 
 ---
 
@@ -61,6 +61,7 @@ DATA_DIR=./data
 **3. Configurer Google OAuth**
 
 Dans la [Google Cloud Console](https://console.cloud.google.com/) :
+
 - Créer un projet → API & Services → Identifiants → OAuth 2.0
 - Ajouter `http://localhost:5173/auth/callback` dans les URIs de redirection autorisés
 - Activer l'API **Google Calendar** si tu veux la fonctionnalité agenda
@@ -80,10 +81,10 @@ Tout se gère dans `data/config.yaml` (créé automatiquement au premier lanceme
 ```yaml
 allowed_emails:
   - alice@exemple.com
-  - '*@monentreprise.com'   # wildcard domaine entier
+  - '*@monentreprise.com' # wildcard domaine entier
 
 admin_emails:
-  - alice@exemple.com       # accès à la page /admin
+  - alice@exemple.com # accès à la page /admin
 ```
 
 ---

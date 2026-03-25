@@ -120,8 +120,7 @@
 		if (ev.allDay) return 'Toute la journée';
 		const start = new Date(ev.start);
 		const end = new Date(ev.end);
-		const fmt = (d: Date) =>
-			d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+		const fmt = (d: Date) => d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 		return `${fmt(start)} – ${fmt(end)}`;
 	}
 
@@ -260,7 +259,10 @@
 				<div class="rounded bg-amber-400 px-1.5 py-0.5 text-[9px] font-semibold text-white">
 					Agenda
 				</div>
-				<span>{initialCalendarEvents.length} événement{initialCalendarEvents.length > 1 ? 's' : ''} Google Calendar</span>
+				<span
+					>{initialCalendarEvents.length} événement{initialCalendarEvents.length > 1 ? 's' : ''} Google
+					Calendar</span
+				>
 			</div>
 		{:else if calendarError === 'auth_expired' || calendarError === 'no_token'}
 			<a
@@ -269,12 +271,18 @@
 				title="Reconnectez-vous pour voir vos événements Google Calendar"
 			>
 				<svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-					<path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+					/>
 				</svg>
 				Connecter Google Calendar
 			</a>
 		{:else if calendarError === 'api_error'}
-			<span class="text-zinc-300" title="Erreur lors du chargement du calendrier">Agenda indisponible</span>
+			<span class="text-zinc-300" title="Erreur lors du chargement du calendrier"
+				>Agenda indisponible</span
+			>
 		{/if}
 	</div>
 
@@ -301,7 +309,7 @@
 									<div class="mt-1.5 flex flex-col gap-0.5">
 										{#each dayEvents as ev (ev.id)}
 											<div
-												class="truncate rounded bg-amber-400/90 px-1 py-px text-[9px] font-semibold leading-tight text-white cursor-default"
+												class="cursor-default truncate rounded bg-amber-400/90 px-1 py-px text-[9px] leading-tight font-semibold text-white"
 												onmouseenter={(e) => showTooltip(e, [ev])}
 												onmousemove={moveTooltip}
 												onmouseleave={hideTooltip}
@@ -376,8 +384,14 @@
 									{#if slotEvents.length > 0}
 										<div
 											class="absolute top-1 right-1 flex flex-col items-end gap-0.5"
-											onmouseenter={(e) => { e.stopPropagation(); showTooltip(e, slotEvents); }}
-											onmousemove={(e) => { e.stopPropagation(); moveTooltip(e); }}
+											onmouseenter={(e) => {
+												e.stopPropagation();
+												showTooltip(e, slotEvents);
+											}}
+											onmousemove={(e) => {
+												e.stopPropagation();
+												moveTooltip(e);
+											}}
 											onmouseleave={hideTooltip}
 										>
 											{#each slotEvents.slice(0, 1) as ev (ev.id)}
