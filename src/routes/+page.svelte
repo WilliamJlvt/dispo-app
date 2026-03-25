@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Créneaux</title>
+	<title>Dispo</title>
 </svelte:head>
 
 {#if data.error === 'unauthorized'}
@@ -23,7 +23,7 @@
 		<div class="mb-8">
 			<div class="mb-6 flex items-center justify-center gap-3">
 				<img src={logo} alt="" class="h-14 w-auto" />
-				<span class="text-4xl font-bold tracking-tight text-zinc-950">Créneaux</span>
+				<span class="text-4xl font-bold tracking-tight text-zinc-950">Dispo</span>
 			</div>
 			<p class="text-base leading-relaxed text-zinc-500">
 				Planification collaborative par disponibilités.<br />
@@ -82,7 +82,7 @@
 	<div class="mx-auto max-w-5xl px-4 py-8">
 		<div class="mb-6 flex items-center justify-between">
 			<div>
-				<h1 class="text-xl font-semibold text-zinc-950">Créneaux</h1>
+				<h1 class="text-xl font-semibold text-zinc-950">Mes dispos</h1>
 				<p class="mt-0.5 text-sm text-zinc-500">
 					{data.crenaux.length} créneau{data.crenaux.length !== 1 ? 'x' : ''}
 				</p>

@@ -12,7 +12,7 @@
 </script>
 
 <svelte:head>
-	<title>Administration — Créneaux</title>
+	<title>Administration — Dispo</title>
 </svelte:head>
 
 <div class="mx-auto max-w-3xl px-4 py-10">
@@ -106,7 +106,7 @@
 	<!-- Liste des créneaux -->
 	<section>
 		<h2 class="mb-4 text-sm font-semibold text-zinc-950">
-			Créneaux <span class="font-normal text-zinc-400">({data.crenaux.length})</span>
+			Sondages <span class="font-normal text-zinc-400">({data.crenaux.length})</span>
 		</h2>
 
 		{#if data.crenaux.length === 0}

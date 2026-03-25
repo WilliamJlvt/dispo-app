@@ -105,7 +105,7 @@ export const GET: RequestHandler = async ({ params }) => {
 											fontWeight: 400,
 											letterSpacing: '0.05em'
 										},
-										children: 'Créneaux'
+										children: 'Dispo'
 									}
 								}
 							]

@@ -1,12 +1,12 @@
-# Créneaux
+# Dispo
 
-> Planification collaborative par disponibilités — chacun coche ses créneaux libres, la heatmap révèle les meilleurs moments en temps réel.
+> Planification collaborative par disponibilités — chacun coche ses dispos, la heatmap révèle les meilleurs moments en temps réel.
 
 ---
 
 ## C'est quoi ?
 
-Créneaux c'est un outil interne pour trouver un horaire qui convient à tout le monde, sans les allers-retours interminables sur Slack.
+Dispo c'est un outil interne pour trouver un horaire qui convient à tout le monde, sans les allers-retours interminables sur Slack.
 
 - Tu crées un créneau (plage de dates + fenêtre horaire)
 - Tu partages le lien
@@ -39,7 +39,7 @@ Pas de compte à créer, pas de base de données — juste Google OAuth pour s'a
 
 ```bash
 git clone ...
-cd crenaux
+cd dispo
 bun install
 ```
 
@@ -113,7 +113,7 @@ bun start          # écoute sur le port 3000
 
 ## Structure des données
 
-Chaque créneau = un fichier YAML dans `data/crenaux/` :
+Chaque créneau = un fichier YAML dans `data/sondages/` :
 
 ```yaml
 id: 2024-01-15-sprint-planning-x4z2

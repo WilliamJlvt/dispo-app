@@ -12,7 +12,7 @@
 		<div class="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
 			<a href="/" class="flex items-center gap-2.5 opacity-90 hover:opacity-100">
 				<img src={logo} alt="" class="h-8 w-auto" />
-				<span class="text-sm font-semibold tracking-tight text-zinc-950">Créneaux</span>
+				<span class="text-sm font-semibold tracking-tight text-zinc-950">Dispo</span>
 			</a>
 			<nav class="flex items-center gap-1">
 				{#if data.user}

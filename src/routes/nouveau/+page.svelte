@@ -15,7 +15,7 @@
 </script>
 
 <svelte:head>
-	<title>Nouveau créneau — Créneaux</title>
+	<title>Nouveau sondage — Dispo</title>
 </svelte:head>
 
 <div class="mx-auto max-w-lg px-4 py-10">

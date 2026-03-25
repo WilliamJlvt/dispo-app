@@ -155,7 +155,7 @@
 </script>
 
 <svelte:head>
-	<title>{creneau.title} - Créneaux</title>
+	<title>{creneau.title} — Dispo</title>
 	<meta property="og:title" content={creneau.title} />
 	<meta
 		property="og:description"
@@ -239,7 +239,7 @@
 					</svg>
 				</div>
 			</div>
-			<span>Mes créneaux</span>
+			<span>Mes dispos</span>
 		</div>
 		<!-- Others -->
 		<div class="flex items-center gap-2">
