@@ -2,6 +2,8 @@
 
 > Planification collaborative par disponibilités — chacun coche ses dispos, la heatmap révèle les meilleurs moments en temps réel.
 
+![Exemple d'un sondage de disponibilités — chaque colonne est un jour, chaque ligne une heure. Tu cliques pour cocher tes dispos, la heatmap verte révèle les créneaux où tout le monde est libre.](screenshots/image.png)
+
 ---
 
 ## C'est quoi ?
