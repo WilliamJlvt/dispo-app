@@ -309,6 +309,7 @@
 									<div class="mt-1.5 flex flex-col gap-0.5">
 										{#each dayEvents as ev (ev.id)}
 											<div
+												role="note"
 												class="cursor-default truncate rounded bg-amber-400/90 px-1 py-px text-[9px] leading-tight font-semibold text-white"
 												onmouseenter={(e) => showTooltip(e, [ev])}
 												onmousemove={moveTooltip}
@@ -383,6 +384,7 @@
 									<!-- Calendar events: small badge top-right -->
 									{#if slotEvents.length > 0}
 										<div
+											role="presentation"
 											class="absolute top-1 right-1 flex flex-col items-end gap-0.5"
 											onmouseenter={(e) => {
 												e.stopPropagation();
