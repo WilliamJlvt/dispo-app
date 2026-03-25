@@ -1,6 +1,6 @@
 import { redirect, error } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { getCreneau, saveCreneau } from '$lib/server/data';
+import { getCreneau, saveCreneau, deleteCreneau } from '$lib/server/data';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
 	if (!locals.user) redirect(302, '/');
@@ -13,6 +13,17 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 };
 
 export const actions: Actions = {
+	delete: async ({ params, locals }) => {
+		if (!locals.user) redirect(302, '/');
+
+		const creneau = getCreneau(params.slug);
+		if (!creneau) error(404, 'Créneau introuvable');
+		if (creneau.created_by !== locals.user.email) error(403, 'Accès refusé');
+
+		deleteCreneau(params.slug);
+		redirect(303, '/');
+	},
+
 	default: async ({ request, params, locals }) => {
 		if (!locals.user) redirect(302, '/');
 

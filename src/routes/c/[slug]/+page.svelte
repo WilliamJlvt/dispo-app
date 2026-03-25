@@ -259,28 +259,30 @@
 
 	<!-- Legend -->
 	<div class="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-zinc-400">
-		<!-- My selection -->
-		<div class="flex items-center gap-2">
-			<div
-				class="relative h-5 w-7 rounded-sm"
-				style="background-color: {heatmapColor(0.5)}; box-shadow: inset 0 0 0 3px #3b82f6;"
-			>
+		<!-- My selection (only shown when logged in) -->
+		{#if user}
+			<div class="flex items-center gap-2">
 				<div
-					class="absolute top-0.5 left-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500"
+					class="relative h-5 w-7 rounded-sm"
+					style="background-color: {heatmapColor(0.5)}; box-shadow: inset 0 0 0 3px #3b82f6;"
 				>
-					<svg
-						class="h-2 w-2 text-white"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-						stroke-width="3.5"
+					<div
+						class="absolute top-0.5 left-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500"
 					>
-						<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-					</svg>
+						<svg
+							class="h-2 w-2 text-white"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+							stroke-width="3.5"
+						>
+							<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+						</svg>
+					</div>
 				</div>
+				<span>Mes dispos</span>
 			</div>
-			<span>Mes dispos</span>
-		</div>
+		{/if}
 		<!-- Others -->
 		<div class="flex items-center gap-2">
 			<div class="flex gap-px">
@@ -388,7 +390,9 @@
 								{@const mine = isMySlot(date, hour)}
 								{@const slotEvents = getSlotCalendarEvents(date, hour)}
 								<td
-									class="group/cell relative cursor-pointer border-l border-zinc-200 select-none"
+									class="group/cell relative border-l border-zinc-200 select-none"
+									class:cursor-pointer={!!user}
+									class:cursor-default={!user}
 									style="height: 52px; min-width: 80px;
 										background-color: {heatmapColor(conv.ratio)};
 										border-bottom: {hi < hours.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none'};
@@ -396,7 +400,7 @@
 									onclick={() => toggleSlot(date, hour)}
 									onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleSlot(date, hour)}
 									role="button"
-									tabindex="0"
+									tabindex={user ? 0 : -1}
 									aria-pressed={mine}
 								>
 									<!-- Hover tint -->
