@@ -33,7 +33,11 @@ export function getDatesInRange(
 	while (current <= end) {
 		const day = current.getDay(); // 0 = Sun, 6 = Sat
 		if (includeWeekends || (day !== 0 && day !== 6)) {
-			dates.push(current.toISOString().slice(0, 10));
+			// Use local date parts to avoid UTC offset shifting the date
+			const y = current.getFullYear();
+			const m = String(current.getMonth() + 1).padStart(2, '0');
+			const d = String(current.getDate()).padStart(2, '0');
+			dates.push(`${y}-${m}-${d}`);
 		}
 		current.setDate(current.getDate() + 1);
 	}
@@ -147,7 +151,10 @@ export function nextMonday(): string {
 	const day = d.getDay();
 	const diff = day === 0 ? 1 : day === 1 ? 7 : 8 - day;
 	d.setDate(d.getDate() + diff);
-	return d.toISOString().slice(0, 10);
+	const y = d.getFullYear();
+	const m = String(d.getMonth() + 1).padStart(2, '0');
+	const dd = String(d.getDate()).padStart(2, '0');
+	return `${y}-${m}-${dd}`;
 }
 
 /**
@@ -157,5 +164,8 @@ export function nextMonday(): string {
 export function nextFriday(): string {
 	const monday = new Date(nextMonday() + 'T00:00:00');
 	monday.setDate(monday.getDate() + 4);
-	return monday.toISOString().slice(0, 10);
+	const y = monday.getFullYear();
+	const m = String(monday.getMonth() + 1).padStart(2, '0');
+	const d = String(monday.getDate()).padStart(2, '0');
+	return `${y}-${m}-${d}`;
 }
