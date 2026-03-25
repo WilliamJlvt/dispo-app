@@ -44,7 +44,7 @@
 		</div>
 	{/if}
 
-	<form method="POST" class="space-y-5">
+	<form method="POST" action="?/save" class="space-y-5">
 		<div class="space-y-1.5">
 			<label for="title" class="text-sm font-medium text-zinc-950">
 				Titre <span class="text-red-500">*</span>

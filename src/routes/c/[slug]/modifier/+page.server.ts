@@ -24,7 +24,7 @@ export const actions: Actions = {
 		redirect(303, '/');
 	},
 
-	default: async ({ request, params, locals }) => {
+	save: async ({ request, params, locals }) => {
 		if (!locals.user) redirect(302, '/');
 
 		const creneau = getCreneau(params.slug);
