@@ -83,14 +83,32 @@ export function heatmapColor(ratio: number): string {
 }
 
 /**
+ * Converts a Date object to a local ISO datetime string "YYYY-MM-DDTHH:MM:SS"
+ * without any timezone suffix, using the browser/server's local timezone.
+ * This avoids UTC-based comparisons that can shift events to the wrong day.
+ */
+function toLocalDateTimeStr(d: Date): string {
+	const y = d.getFullYear();
+	const mo = String(d.getMonth() + 1).padStart(2, '0');
+	const day = String(d.getDate()).padStart(2, '0');
+	const h = String(d.getHours()).padStart(2, '0');
+	const mi = String(d.getMinutes()).padStart(2, '0');
+	const s = String(d.getSeconds()).padStart(2, '0');
+	return `${y}-${mo}-${day}T${h}:${mi}:${s}`;
+}
+
+/**
  * Checks if a Google Calendar event overlaps a given date+hour slot.
  * The slot is from hour:00 to hour+1:00 on the given date.
+ * Comparison is done in LOCAL time to avoid UTC offset shifting events to the wrong day.
  */
 export function eventOverlapsSlot(event: CalendarEvent, date: string, hour: number): boolean {
-	const slotStart = new Date(`${date}T${String(hour).padStart(2, '0')}:00:00`);
-	const slotEnd = new Date(`${date}T${String(hour + 1).padStart(2, '0')}:00:00`);
-	const evStart = new Date(event.start);
-	const evEnd = new Date(event.end);
+	const slotStart = `${date}T${String(hour).padStart(2, '0')}:00:00`;
+	const slotEnd = `${date}T${String(hour + 1).padStart(2, '0')}:00:00`;
+	// Convert event times to local datetime strings (handles timezone offsets in event.start)
+	const evStart = toLocalDateTimeStr(new Date(event.start));
+	const evEnd = toLocalDateTimeStr(new Date(event.end));
+	// String comparison works because ISO datetime strings are lexicographically sortable
 	return evStart < slotEnd && evEnd > slotStart;
 }
 
