@@ -209,7 +209,7 @@
 				{:else}
 					<span class="text-xs text-zinc-300">Sauvegardé</span>
 				{/if}
-				{#if user.email === creneau.created_by}
+				{#if user?.email === creneau.created_by}
 					<a
 						href="/c/{creneau.id}/modifier"
 						class="inline-flex h-8 items-center rounded-md border border-zinc-200 px-3 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950"
@@ -511,7 +511,7 @@
 							class="inline-flex h-7 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs"
 						>
 							<span class="font-medium text-zinc-700">{resp.name}</span>
-							{#if email === user.email}
+							{#if email === user?.email}
 								<span class="rounded-full bg-zinc-900 px-1.5 py-0.5 text-[10px] text-white"
 									>vous</span
 								>
