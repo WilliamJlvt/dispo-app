@@ -3,6 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
 	import logo from '$lib/assets/logo.svg';
+	import { page } from '$app/stores';
 
 	let { data, children } = $props<{ data: LayoutData & { isAdmin: boolean }; children: Snippet }>();
 </script>
@@ -49,7 +50,7 @@
 					</a>
 				{:else}
 					<a
-						href="/auth/google"
+						href="/auth/google?redirectTo={$page.url.pathname}"
 						class="inline-flex items-center gap-2 rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
 					>
 						Connexion

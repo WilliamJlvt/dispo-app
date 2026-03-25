@@ -6,7 +6,7 @@ import type { CalendarEvent } from '$lib/types'; // needed for the array type be
 
 export const load: PageServerLoad = async ({ params, locals, url }) => {
 	if (!locals.user) {
-		redirect(302, '/');
+		redirect(302, `/auth/google?redirectTo=/c/${params.slug}`);
 	}
 
 	const creneau = getCreneau(params.slug);

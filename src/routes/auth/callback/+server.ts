@@ -12,6 +12,8 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 	cookies.delete('oauth_state', { path: '/' });
 	cookies.delete('oauth_code_verifier', { path: '/' });
+	const redirectTo = cookies.get('oauth_redirect') ?? '/';
+	cookies.delete('oauth_redirect', { path: '/' });
 
 	if (!code || !state || state !== storedState || !codeVerifier) {
 		redirect(302, '/?error=oauth_error');
@@ -27,14 +29,11 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			headers: { Authorization: `Bearer ${accessToken}` }
 		});
 		const userInfo = await userInfoRes.json();
-		console.log('[auth] userInfo complet:', userInfo);
 		const email: string = userInfo.email;
 		const name: string = userInfo.name ?? '';
 		const picture: string = userInfo.picture ?? '';
 
-		console.log('[auth] email reçu:', email);
 		const config = getConfig();
-		console.log('[auth] allowed_emails:', config.allowed_emails);
 		const isAllowed = config.allowed_emails.some((pattern) => {
 			if (pattern === email) return true;
 			if (pattern.startsWith('*@')) {
@@ -55,7 +54,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			maxAge: 60 * 60 * 24 * 7
 		});
 
-		redirect(302, '/');
+		redirect(302, redirectTo);
 	} catch (err) {
 		if (err instanceof OAuth2RequestError) {
 			redirect(302, '/?error=oauth_error');

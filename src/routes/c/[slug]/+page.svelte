@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, untrack } from 'svelte';
+	import { page } from '$app/stores';
 	import type { PageData } from './$types';
 	import type { UserResponse, CalendarEvent } from '$lib/types';
 	import {
@@ -266,7 +267,7 @@
 			</div>
 		{:else if calendarError === 'auth_expired' || calendarError === 'no_token'}
 			<a
-				href="/auth/google"
+				href="/auth/google?redirectTo={$page.url.pathname}"
 				class="flex items-center gap-1.5 text-zinc-400 underline underline-offset-2 hover:text-zinc-600"
 				title="Reconnectez-vous pour voir vos événements Google Calendar"
 			>
