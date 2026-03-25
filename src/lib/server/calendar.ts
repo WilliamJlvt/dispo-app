@@ -12,8 +12,10 @@ export async function getCalendarEvents(
 	dateStart: string,
 	dateEnd: string,
 	refreshToken?: string
-): Promise<CalendarEvent[]> {
-	if (!accessToken && !refreshToken) return [];
+): Promise<{ events: CalendarEvent[]; error?: string }> {
+	if (!accessToken && !refreshToken) {
+		return { events: [], error: 'no_token' };
+	}
 
 	try {
 		const auth = new googleApis.auth.OAuth2(env.GOOGLE_CLIENT_ID, env.GOOGLE_CLIENT_SECRET);
@@ -59,8 +61,19 @@ export async function getCalendarEvents(
 			});
 		}
 
-		return events;
-	} catch {
-		return [];
+		console.log(`[calendar] ${events.length} events fetched (${dateStart} → ${dateEnd})`);
+		return { events };
+	} catch (err) {
+		const message = err instanceof Error ? err.message : String(err);
+		console.error('[calendar] fetch failed:', message);
+
+		// Distinguish token expiry from other errors
+		const isAuthError =
+			message.includes('invalid_grant') ||
+			message.includes('Token has been expired') ||
+			message.includes('Invalid Credentials') ||
+			message.includes('unauthorized');
+
+		return { events: [], error: isAuthError ? 'auth_expired' : 'api_error' };
 	}
 }

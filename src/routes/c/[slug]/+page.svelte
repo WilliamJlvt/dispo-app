@@ -17,6 +17,7 @@
 	const creneau = $derived(data.creneau);
 	const user = $derived(data.user);
 	const initialCalendarEvents = $derived((data.calendarEvents ?? []) as CalendarEvent[]);
+	const calendarError = $derived(data.calendarError as string | undefined);
 	const dates = $derived(
 		getDatesInRange(creneau.date_start, creneau.date_end, creneau.include_weekends)
 	);
@@ -217,14 +218,27 @@
 			</div>
 			<span>Disponibilité du groupe</span>
 		</div>
-		<!-- Calendar -->
+		<!-- Calendar status -->
 		{#if initialCalendarEvents.length > 0}
 			<div class="flex items-center gap-2">
 				<div class="rounded bg-amber-400 px-1.5 py-0.5 text-[9px] font-semibold text-white">
 					Agenda
 				</div>
-				<span>Votre Google Calendar</span>
+				<span>{initialCalendarEvents.length} événement{initialCalendarEvents.length > 1 ? 's' : ''} Google Calendar</span>
 			</div>
+		{:else if calendarError === 'auth_expired' || calendarError === 'no_token'}
+			<a
+				href="/auth/google"
+				class="flex items-center gap-1.5 text-zinc-400 underline underline-offset-2 hover:text-zinc-600"
+				title="Reconnectez-vous pour voir vos événements Google Calendar"
+			>
+				<svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+				</svg>
+				Connecter Google Calendar
+			</a>
+		{:else if calendarError === 'api_error'}
+			<span class="text-zinc-300" title="Erreur lors du chargement du calendrier">Agenda indisponible</span>
 		{/if}
 	</div>
 
