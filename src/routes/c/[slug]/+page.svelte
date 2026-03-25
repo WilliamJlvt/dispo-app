@@ -338,11 +338,17 @@
 				<thead>
 					<tr class="bg-white">
 						<!-- Empty corner cell -->
-						<th class="sticky left-0 z-10 bg-white border-b border-r border-zinc-200" style="min-width: 64px;"></th>
+						<th
+							class="sticky left-0 z-10 border-r border-b border-zinc-200 bg-white"
+							style="min-width: 64px;"
+						></th>
 						{#each dates as date (date)}
 							{@const parts = formatDateParts(date)}
 							{@const dayEvents = getAllDayEvents(date)}
-							<th class="bg-white px-2 py-2 text-center border-b border-r border-zinc-200" style="min-width: 80px;">
+							<th
+								class="border-r border-b border-zinc-200 bg-white px-2 py-2 text-center"
+								style="min-width: 80px;"
+							>
 								<span
 									class="block text-[10px] font-semibold tracking-widest text-zinc-400 uppercase"
 									>{parts.day}</span
@@ -374,7 +380,7 @@
 						<tr class="group/row">
 							<!-- Time label: shows the range "10h → 11h" -->
 							<td
-								class="sticky left-0 z-10 bg-white select-none border-b border-r border-zinc-200"
+								class="sticky left-0 z-10 border-r border-b border-zinc-200 bg-white select-none"
 								style="width: 64px; min-width: 64px; height: 52px; border-radius: 6px;"
 							>
 								<div class="flex h-full flex-col items-end justify-between px-3 py-1.5">
@@ -393,7 +399,7 @@
 									? (effectiveResponses[hoveredEmail]?.slots[date]?.includes(hour) ?? false)
 									: false}
 								<td
-									class="group/cell relative select-none border-b border-r border-zinc-100"
+									class="group/cell relative border-r border-b border-zinc-100 select-none"
 									class:cursor-pointer={!!user}
 									class:cursor-default={!user}
 									style="height: 52px; min-width: 80px; border-radius: 6px; overflow: hidden;
@@ -413,7 +419,9 @@
 									{#if hoveredEmail}
 										<div
 											class="pointer-events-none absolute inset-0 transition-opacity duration-75"
-											style="background-color: {hoveredHasSlot ? 'transparent' : 'rgba(255,255,255,0.72)'}"
+											style="background-color: {hoveredHasSlot
+												? 'transparent'
+												: 'rgba(255,255,255,0.72)'}"
 										></div>
 									{/if}
 
@@ -421,7 +429,9 @@
 									{#if hoveredHasSlot || mine}
 										<div
 											class="pointer-events-none absolute"
-											style="inset: 3px; border-radius: 4px; border: 2.5px solid {hoveredHasSlot ? '#7c3aed' : '#3b82f6'};"
+											style="inset: 3px; border-radius: 4px; border: 2.5px solid {hoveredHasSlot
+												? '#7c3aed'
+												: '#3b82f6'};"
 										></div>
 									{/if}
 
@@ -497,15 +507,14 @@
 					<!-- Final time boundary -->
 					<tr>
 						<td
-							class="sticky left-0 z-10 bg-white px-3 py-1 text-right border-r border-zinc-200"
+							class="sticky left-0 z-10 border-r border-zinc-200 bg-white px-3 py-1 text-right"
 							style="width: 64px; min-width: 64px; border-radius: 6px;"
 						>
 							<span class="text-xs font-semibold text-zinc-600">{formatHour(creneau.hour_end)}</span
 							>
 						</td>
 						{#each dates as date2 (date2)}
-							<td class="bg-white" style="height: 8px; min-width: 80px; border-radius: 6px;"
-							></td>
+							<td class="bg-white" style="height: 8px; min-width: 80px; border-radius: 6px;"></td>
 						{/each}
 					</tr>
 				</tbody>
