@@ -376,7 +376,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each hours as hour, hi (hour)}
+					{#each hours as hour (hour)}
 						<tr class="group/row">
 							<!-- Time label: shows the range "10h → 11h" -->
 							<td
@@ -399,27 +399,33 @@
 									? (effectiveResponses[hoveredEmail]?.slots[date]?.includes(hour) ?? false)
 									: false}
 								<td
-									class="group/cell relative border-r border-b border-zinc-100 select-none"
+									class="group/cell relative border-r border-b border-zinc-100 select-none bg-white"
 									class:cursor-pointer={!!user}
 									class:cursor-default={!user}
-									style="height: 52px; min-width: 80px; border-radius: 6px; overflow: hidden;
-										background-color: {heatmapColor(conv.ratio)};"
+									style="height: 52px; min-width: 80px;"
 									onclick={() => toggleSlot(date, hour)}
 									onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleSlot(date, hour)}
 									role="button"
 									tabindex={user ? 0 : -1}
 									aria-pressed={mine}
 								>
+									<!-- Heatmap fill — le bg-white du <td> crée le gap autour -->
+									<div
+										class="pointer-events-none absolute"
+										style="inset: 3px; border-radius: 4px; background-color: {heatmapColor(conv.ratio)};"
+									></div>
+
 									<!-- Hover tint -->
 									<div
-										class="pointer-events-none absolute inset-0 bg-white opacity-0 transition-opacity duration-75 group-hover/cell:opacity-15"
+										class="pointer-events-none absolute bg-white opacity-0 transition-opacity duration-75 group-hover/cell:opacity-15"
+										style="inset: 3px; border-radius: 4px;"
 									></div>
 
 									<!-- Participant highlight overlay -->
 									{#if hoveredEmail}
 										<div
-											class="pointer-events-none absolute inset-0 transition-opacity duration-75"
-											style="background-color: {hoveredHasSlot
+											class="pointer-events-none absolute transition-opacity duration-75"
+											style="inset: 3px; border-radius: 4px; background-color: {hoveredHasSlot
 												? 'transparent'
 												: 'rgba(255,255,255,0.72)'}"
 										></div>
@@ -429,7 +435,7 @@
 									{#if hoveredHasSlot || mine}
 										<div
 											class="pointer-events-none absolute"
-											style="inset: 3px; border-radius: 4px; border: 2.5px solid {hoveredHasSlot
+											style="inset: 2px; border-radius: 5px; border: 3px solid {hoveredHasSlot
 												? '#7c3aed'
 												: '#3b82f6'};"
 										></div>
