@@ -13,13 +13,23 @@ services:
       - DATA_DIR=/data
     labels:
       - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik-network'
+
+      # HTTP & redirect
+      - 'traefik.http.routers.crenaux-http.rule=Host(`${DOMAIN}`)'
+      - 'traefik.http.routers.crenaux-http.entrypoints=web'
+      - 'traefik.http.routers.crenaux-http.middlewares=redirect-to-https@docker'
+
+      # HTTPS
       - 'traefik.http.routers.crenaux.rule=Host(`${DOMAIN}`)'
       - 'traefik.http.routers.crenaux.entrypoints=websecure'
       - 'traefik.http.routers.crenaux.tls.certresolver=letsencrypt'
+
+      # docker port
       - 'traefik.http.services.crenaux.loadbalancer.server.port=3000'
     networks:
-      - traefik
+      - traefik-network
 
 networks:
-  traefik:
+  traefik-network:
     external: true
