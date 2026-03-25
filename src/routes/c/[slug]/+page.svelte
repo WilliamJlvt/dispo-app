@@ -110,7 +110,6 @@
 		const es = new EventSource(`/c/${creneau.id}/stream`);
 		es.onmessage = (e) => {
 			const newResponses = JSON.parse(e.data) as Record<string, UserResponse>;
-			// Merge: preserve our own local state but update others
 			serverResponses = newResponses;
 		};
 		return () => es.close();
@@ -166,31 +165,44 @@
 	</div>
 
 	<!-- Legend -->
-	<div class="mb-4 flex flex-wrap items-center gap-4 text-xs text-zinc-400">
-		<div class="flex items-center gap-1.5">
+	<div class="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-zinc-400">
+		<!-- My selection -->
+		<div class="flex items-center gap-2">
 			<div
-				class="relative h-3.5 w-5 overflow-hidden rounded-sm border border-blue-300"
-				style="background-color: #f9fafb; background-image: repeating-linear-gradient(45deg, rgba(59,130,246,0.18) 0px, rgba(59,130,246,0.18) 2px, transparent 2px, transparent 9px);"
+				class="relative h-5 w-7 rounded-sm"
+				style="background-color: {heatmapColor(0.5)}; box-shadow: inset 0 0 0 3px #3b82f6;"
 			>
-				<div class="absolute inset-y-0 left-0 w-[3px] bg-blue-500"></div>
+				<div
+					class="absolute top-0.5 left-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500"
+				>
+					<svg class="h-2 w-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3.5">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+					</svg>
+				</div>
 			</div>
-			<span>Votre sélection</span>
+			<span>Mes créneaux</span>
 		</div>
-		<div class="flex items-center gap-1.5">
-			<div class="rounded bg-amber-400/90 px-1 py-px text-[9px] font-medium text-white">Réunion</div>
-			<span>Agenda Google</span>
-		</div>
-		<div class="flex items-center gap-1.5">
-			<div class="flex gap-0.5">
-				{#each [0, 0.33, 0.66, 1] as r (r)}
+		<!-- Others -->
+		<div class="flex items-center gap-2">
+			<div class="flex gap-px">
+				{#each [0.2, 0.5, 0.8, 1] as r (r)}
 					<div
-						class="h-3.5 w-3.5 rounded-sm"
-						style="background-color: {heatmapColor(r)}; border: 1px solid rgba(0,0,0,0.06)"
+						class="h-4 w-4 first:rounded-l-sm last:rounded-r-sm"
+						style="background-color: {heatmapColor(r)};"
 					></div>
 				{/each}
 			</div>
-			<span>0 → 100% disponibles</span>
+			<span>Disponibilité du groupe</span>
 		</div>
+		<!-- Calendar -->
+		{#if initialCalendarEvents.length > 0}
+			<div class="flex items-center gap-2">
+				<div class="rounded bg-amber-400 px-1.5 py-0.5 text-[9px] font-semibold text-white">
+					Agenda
+				</div>
+				<span>Votre Google Calendar</span>
+			</div>
+		{/if}
 	</div>
 
 	<!-- Grid -->
@@ -198,21 +210,19 @@
 		<div class="overflow-x-auto">
 			<table class="w-full border-collapse" style="min-width: max-content;">
 				<thead>
-					<tr class="bg-zinc-50">
-						<th
-							class="sticky left-0 z-10 border-r border-b border-zinc-200 bg-zinc-50 px-3 py-3"
-							style="min-width: 56px;"
-						></th>
+					<tr class="border-b border-zinc-200 bg-zinc-50">
+						<!-- Empty corner cell -->
+						<th class="sticky left-0 z-10 bg-zinc-50" style="min-width: 64px;"></th>
 						{#each dates as date (date)}
 							{@const parts = formatDateParts(date)}
 							<th
-								class="border-r border-b border-zinc-200 px-2 py-2.5 text-center whitespace-nowrap"
-								style="min-width: 84px;"
+								class="border-l border-zinc-200 px-2 py-3 text-center"
+								style="min-width: 80px;"
 							>
-								<span class="block text-[10px] font-medium tracking-wider text-zinc-400 uppercase"
+								<span class="block text-[10px] font-semibold tracking-widest text-zinc-400 uppercase"
 									>{parts.day}</span
 								>
-								<span class="block text-sm leading-tight font-semibold text-zinc-950"
+								<span class="block text-sm font-bold text-zinc-900 leading-tight"
 									>{parts.num} {parts.month}</span
 								>
 							</th>
@@ -221,64 +231,89 @@
 				</thead>
 				<tbody>
 					{#each hours as hour, hi (hour)}
-						<tr>
+						<tr class="group/row" class:border-t={hi > 0}>
+							<!-- Time label: shows the range "10h → 11h" -->
 							<td
-								class="sticky left-0 z-10 border-r border-zinc-200 bg-white px-3 text-right align-middle"
-								class:border-b={hi < hours.length - 1}
-								style="min-width: 56px; height: 52px; border-bottom-color: rgb(228 228 231);"
+								class="sticky left-0 z-10 select-none border-r border-zinc-200 bg-white"
+								style="width: 64px; min-width: 64px; height: 52px; border-bottom: {hi < hours.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none'};"
 							>
-								<span class="text-xs font-medium text-zinc-400">{formatHour(hour)}</span>
+								<div class="flex h-full flex-col items-end justify-between px-3 py-1.5">
+									<span class="text-xs font-semibold text-zinc-600 leading-none"
+										>{formatHour(hour)}</span
+									>
+									<span class="text-[10px] text-zinc-300 leading-none"
+										>{formatHour(hour + 1)}</span
+									>
+								</div>
 							</td>
-							{#each dates as date, di (date)}
+
+							{#each dates as date (date)}
 								{@const conv = getConvergence(date, hour)}
 								{@const mine = isMySlot(date, hour)}
 								{@const slotEvents = getSlotCalendarEvents(date, hour)}
+								{@const othersCount = mine ? conv.count - 1 : conv.count}
+
 								<td
-									class="group relative cursor-pointer select-none"
-									class:border-b={hi < hours.length - 1}
-									class:border-r={di < dates.length - 1}
-									style="height: 52px; min-width: 84px; background-color: {heatmapColor(conv.ratio)}; background-image: {mine ? 'repeating-linear-gradient(45deg, rgba(59,130,246,0.18) 0px, rgba(59,130,246,0.18) 2px, transparent 2px, transparent 9px)' : 'none'}; border-color: rgba(0,0,0,0.07);"
+									class="group/cell relative cursor-pointer select-none border-l border-zinc-200"
+									style="height: 52px; min-width: 80px;
+										background-color: {heatmapColor(conv.ratio)};
+										border-bottom: {hi < hours.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none'};
+										box-shadow: {mine ? 'inset 0 0 0 3px #3b82f6' : 'none'};"
 									onclick={() => toggleSlot(date, hour)}
 									onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleSlot(date, hour)}
 									role="button"
 									tabindex="0"
 									aria-pressed={mine}
 								>
-									<!-- Hover overlay -->
+									<!-- Hover tint -->
 									<div
-										class="pointer-events-none absolute inset-0 bg-white opacity-0 transition-opacity group-hover:opacity-10"
+										class="pointer-events-none absolute inset-0 bg-white opacity-0 transition-opacity duration-75 group-hover/cell:opacity-15"
 									></div>
 
-									<!-- Selection indicator: left border accent -->
+									<!-- My slot: filled blue dot top-left -->
 									{#if mine}
-										<div class="pointer-events-none absolute inset-y-0 left-0 w-[3px] rounded-l bg-blue-500"></div>
-									{/if}
-
-									<!-- Calendar events -->
-									{#if slotEvents.length > 0}
 										<div
-											class="pointer-events-none absolute top-1 right-1 flex flex-col gap-0.5"
-											title={slotEvents.map((e) => e.summary).join(', ')}
+											class="pointer-events-none absolute top-1.5 left-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 shadow-sm"
 										>
-											{#each slotEvents.slice(0, 2) as ev (ev.id)}
-												<div class="max-w-[60px] truncate rounded bg-amber-400/90 px-1 py-px text-[9px] font-medium leading-tight text-white shadow-sm">
-													{ev.summary}
-												</div>
-											{/each}
+											<svg
+												class="h-2.5 w-2.5 text-white"
+												fill="none"
+												viewBox="0 0 24 24"
+												stroke="currentColor"
+												stroke-width="3.5"
+											>
+												<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+											</svg>
 										</div>
 									{/if}
 
-									<!-- Count (only when at least 1 person available) -->
-									{#if conv.count > 0}
+									<!-- Calendar events: small badge top-right -->
+									{#if slotEvents.length > 0}
 										<div
-											class="pointer-events-none absolute inset-0 flex items-center justify-center"
+											class="pointer-events-none absolute top-1 right-1 flex flex-col items-end gap-0.5"
+											title={slotEvents.map((e) => e.summary).join(', ')}
 										>
+											{#each slotEvents.slice(0, 1) as ev (ev.id)}
+												<div class="max-w-[56px] truncate rounded bg-amber-400 px-1 py-px text-[9px] font-semibold leading-tight text-white shadow-sm">
+													{ev.summary}
+												</div>
+											{/each}
+											{#if slotEvents.length > 1}
+												<div class="rounded bg-amber-400/80 px-1 py-px text-[9px] font-semibold leading-tight text-white">
+													+{slotEvents.length - 1}
+												</div>
+											{/if}
+										</div>
+									{/if}
+
+									<!-- Convergence count: centered -->
+									{#if conv.total > 1 && conv.count > 0}
+										<div class="pointer-events-none absolute inset-0 flex items-center justify-center">
 											<span
-												class="text-[11px] font-semibold tabular-nums {conv.ratio > 0.55
-													? 'text-white/90'
-													: 'text-zinc-600'}"
+												class="text-[11px] font-semibold tabular-nums leading-none"
+												style="color: {conv.ratio > 0.55 ? 'rgba(255,255,255,0.9)' : 'rgba(39,39,42,0.65)'};"
 											>
-												{conv.count}<span class="opacity-50">/{conv.total}</span>
+												{conv.count}/{conv.total}
 											</span>
 										</div>
 									{/if}
@@ -286,19 +321,21 @@
 							{/each}
 						</tr>
 					{/each}
-					<!-- End-time boundary row -->
+
+					<!-- Final time boundary -->
 					<tr class="border-t border-zinc-200">
 						<td
-							class="sticky left-0 z-10 border-r border-zinc-200 bg-white px-3 text-right align-middle"
-							style="min-width: 56px; height: 24px;"
+							class="sticky left-0 z-10 border-r border-zinc-200 bg-white px-3 py-1 text-right"
+							style="width: 64px; min-width: 64px;"
 						>
-							<span class="text-xs font-medium text-zinc-400">{formatHour(creneau.hour_end)}</span>
+							<span class="text-xs font-semibold text-zinc-600"
+								>{formatHour(creneau.hour_end)}</span
+							>
 						</td>
-						{#each dates as date, di (date)}
+						{#each dates as date2 (date2)}
 							<td
-								class="bg-zinc-50"
-								class:border-r={di < dates.length - 1}
-								style="min-width: 84px; border-color: rgba(0,0,0,0.07);"
+								class="bg-white border-l border-zinc-200"
+								style="height: 8px; min-width: 80px;"
 							></td>
 						{/each}
 					</tr>
