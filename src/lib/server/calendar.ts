@@ -16,10 +16,7 @@ export async function getCalendarEvents(
 	if (!accessToken && !refreshToken) return [];
 
 	try {
-		const auth = new googleApis.auth.OAuth2(
-			env.GOOGLE_CLIENT_ID,
-			env.GOOGLE_CLIENT_SECRET
-		);
+		const auth = new googleApis.auth.OAuth2(env.GOOGLE_CLIENT_ID, env.GOOGLE_CLIENT_SECRET);
 		auth.setCredentials({
 			access_token: accessToken,
 			refresh_token: refreshToken

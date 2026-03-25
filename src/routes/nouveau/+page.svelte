@@ -1,13 +1,12 @@
 <script lang="ts">
 	import type { PageData, ActionData } from './$types';
+	import { untrack } from 'svelte';
 
 	let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-	const { defaultStart, defaultEnd } = data;
-
 	let title = $state('');
-	let dateStart = $state(defaultStart);
-	let dateEnd = $state(defaultEnd);
+	let dateStart = $state(untrack(() => data.defaultStart));
+	let dateEnd = $state(untrack(() => data.defaultEnd));
 	let hourStart = $state(10);
 	let hourEnd = $state(20);
 	let includeWeekends = $state(false);

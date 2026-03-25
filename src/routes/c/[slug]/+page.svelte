@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import type { PageData } from './$types';
 	import type { UserResponse, CalendarEvent } from '$lib/types';
 	import {
@@ -22,10 +22,12 @@
 	);
 	const hours = $derived(getHours(creneau.hour_start, creneau.hour_end));
 
-	let serverResponses = $state<Record<string, UserResponse>>({ ...data.creneau.responses });
-	let mySlots = $state<Record<string, number[]>>({
-		...(data.creneau.responses[data.user.email]?.slots ?? {})
-	});
+	let serverResponses = $state<Record<string, UserResponse>>(
+		untrack(() => ({ ...data.creneau.responses }))
+	);
+	let mySlots = $state<Record<string, number[]>>(
+		untrack(() => ({ ...(data.creneau.responses[data.user.email]?.slots ?? {}) }))
+	);
 	let saving = $state(false);
 	let saveTimeout: ReturnType<typeof setTimeout> | null = null;
 	let copied = $state(false);
@@ -175,7 +177,13 @@
 				<div
 					class="absolute top-0.5 left-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500"
 				>
-					<svg class="h-2 w-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3.5">
+					<svg
+						class="h-2 w-2 text-white"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+						stroke-width="3.5"
+					>
 						<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
 					</svg>
 				</div>
@@ -215,14 +223,12 @@
 						<th class="sticky left-0 z-10 bg-zinc-50" style="min-width: 64px;"></th>
 						{#each dates as date (date)}
 							{@const parts = formatDateParts(date)}
-							<th
-								class="border-l border-zinc-200 px-2 py-3 text-center"
-								style="min-width: 80px;"
-							>
-								<span class="block text-[10px] font-semibold tracking-widest text-zinc-400 uppercase"
+							<th class="border-l border-zinc-200 px-2 py-3 text-center" style="min-width: 80px;">
+								<span
+									class="block text-[10px] font-semibold tracking-widest text-zinc-400 uppercase"
 									>{parts.day}</span
 								>
-								<span class="block text-sm font-bold text-zinc-900 leading-tight"
+								<span class="block text-sm leading-tight font-bold text-zinc-900"
 									>{parts.num} {parts.month}</span
 								>
 							</th>
@@ -234,16 +240,17 @@
 						<tr class="group/row" class:border-t={hi > 0}>
 							<!-- Time label: shows the range "10h → 11h" -->
 							<td
-								class="sticky left-0 z-10 select-none border-r border-zinc-200 bg-white"
-								style="width: 64px; min-width: 64px; height: 52px; border-bottom: {hi < hours.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none'};"
+								class="sticky left-0 z-10 border-r border-zinc-200 bg-white select-none"
+								style="width: 64px; min-width: 64px; height: 52px; border-bottom: {hi <
+								hours.length - 1
+									? '1px solid rgba(0,0,0,0.06)'
+									: 'none'};"
 							>
 								<div class="flex h-full flex-col items-end justify-between px-3 py-1.5">
-									<span class="text-xs font-semibold text-zinc-600 leading-none"
+									<span class="text-xs leading-none font-semibold text-zinc-600"
 										>{formatHour(hour)}</span
 									>
-									<span class="text-[10px] text-zinc-300 leading-none"
-										>{formatHour(hour + 1)}</span
-									>
+									<span class="text-[10px] leading-none text-zinc-300">{formatHour(hour + 1)}</span>
 								</div>
 							</td>
 
@@ -252,7 +259,7 @@
 								{@const mine = isMySlot(date, hour)}
 								{@const slotEvents = getSlotCalendarEvents(date, hour)}
 								<td
-									class="group/cell relative cursor-pointer select-none border-l border-zinc-200"
+									class="group/cell relative cursor-pointer border-l border-zinc-200 select-none"
 									style="height: 52px; min-width: 80px;
 										background-color: {heatmapColor(conv.ratio)};
 										border-bottom: {hi < hours.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none'};
@@ -292,12 +299,16 @@
 											title={slotEvents.map((e) => e.summary).join(', ')}
 										>
 											{#each slotEvents.slice(0, 1) as ev (ev.id)}
-												<div class="max-w-[56px] truncate rounded bg-amber-400 px-1 py-px text-[9px] font-semibold leading-tight text-white shadow-sm">
+												<div
+													class="max-w-[56px] truncate rounded bg-amber-400 px-1 py-px text-[9px] leading-tight font-semibold text-white shadow-sm"
+												>
 													{ev.summary}
 												</div>
 											{/each}
 											{#if slotEvents.length > 1}
-												<div class="rounded bg-amber-400/80 px-1 py-px text-[9px] font-semibold leading-tight text-white">
+												<div
+													class="rounded bg-amber-400/80 px-1 py-px text-[9px] leading-tight font-semibold text-white"
+												>
 													+{slotEvents.length - 1}
 												</div>
 											{/if}
@@ -306,10 +317,14 @@
 
 									<!-- Convergence count: centered -->
 									{#if conv.total > 1 && conv.count > 0}
-										<div class="pointer-events-none absolute inset-0 flex items-center justify-center">
+										<div
+											class="pointer-events-none absolute inset-0 flex items-center justify-center"
+										>
 											<span
-												class="text-[11px] font-semibold tabular-nums leading-none"
-												style="color: {conv.ratio > 0.55 ? 'rgba(255,255,255,0.9)' : 'rgba(39,39,42,0.65)'};"
+												class="text-[11px] leading-none font-semibold tabular-nums"
+												style="color: {conv.ratio > 0.55
+													? 'rgba(255,255,255,0.9)'
+													: 'rgba(39,39,42,0.65)'};"
 											>
 												{conv.count}/{conv.total}
 											</span>
@@ -326,14 +341,11 @@
 							class="sticky left-0 z-10 border-r border-zinc-200 bg-white px-3 py-1 text-right"
 							style="width: 64px; min-width: 64px;"
 						>
-							<span class="text-xs font-semibold text-zinc-600"
-								>{formatHour(creneau.hour_end)}</span
+							<span class="text-xs font-semibold text-zinc-600">{formatHour(creneau.hour_end)}</span
 							>
 						</td>
 						{#each dates as date2 (date2)}
-							<td
-								class="bg-white border-l border-zinc-200"
-								style="height: 8px; min-width: 80px;"
+							<td class="border-l border-zinc-200 bg-white" style="height: 8px; min-width: 80px;"
 							></td>
 						{/each}
 					</tr>

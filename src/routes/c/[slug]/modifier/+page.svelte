@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { PageData, ActionData } from './$types';
+	import { untrack } from 'svelte';
 
 	let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-	const c = data.creneau;
+	const c = untrack(() => data.creneau);
 
 	let title = $state(c.title);
 	let dateStart = $state(c.date_start);

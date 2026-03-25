@@ -2,10 +2,11 @@
 	import type { PageData, ActionData } from './$types';
 	import { formatDate } from '$lib/utils';
 	import { enhance } from '$app/forms';
+	import { untrack } from 'svelte';
 
 	let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-	let emailsText = $state((data.allowedEmails ?? []).join('\n'));
+	let emailsText = $state(untrack(() => (data.allowedEmails ?? []).join('\n')));
 	let confirmDelete = $state<string | null>(null);
 </script>
 
