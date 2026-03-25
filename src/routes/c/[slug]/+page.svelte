@@ -399,7 +399,7 @@
 									? (effectiveResponses[hoveredEmail]?.slots[date]?.includes(hour) ?? false)
 									: false}
 								<td
-									class="group/cell relative border-r border-b border-zinc-100 select-none bg-white"
+									class="group/cell relative border-r border-b border-zinc-100 bg-white select-none"
 									class:cursor-pointer={!!user}
 									class:cursor-default={!user}
 									style="height: 52px; min-width: 80px;"
@@ -412,7 +412,9 @@
 									<!-- Heatmap fill — le bg-white du <td> crée le gap autour -->
 									<div
 										class="pointer-events-none absolute"
-										style="inset: 3px; border-radius: 4px; background-color: {heatmapColor(conv.ratio)};"
+										style="inset: 3px; border-radius: 4px; background-color: {heatmapColor(
+											conv.ratio
+										)};"
 									></div>
 
 									<!-- Hover tint -->
@@ -436,8 +438,6 @@
 										<div
 											class="pointer-events-none absolute"
 											style="inset: 2px; border-radius: 5px; border: 3px solid #3b82f6;"
-
-
 										></div>
 									{/if}
 
