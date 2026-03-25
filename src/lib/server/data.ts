@@ -33,8 +33,13 @@ export function getConfig(): AppConfig {
 		const raw = fs.readFileSync(configPath(), 'utf-8');
 		return yaml.load(raw) as AppConfig;
 	} catch {
-		return { allowed_emails: [] };
+		return { allowed_emails: [], admin_emails: [] };
 	}
+}
+
+export function isAdmin(email: string): boolean {
+	const config = getConfig();
+	return (config.admin_emails ?? []).includes(email);
 }
 
 export function saveConfig(config: AppConfig): void {

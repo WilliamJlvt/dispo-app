@@ -1,2 +1,4 @@
 allowed_emails:
   - '*@juniortaker.com'
+admin_emails:
+  - william.jolivet@juniortaker.com

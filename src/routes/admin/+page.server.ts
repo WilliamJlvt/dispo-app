@@ -1,9 +1,9 @@
 import { redirect, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { getConfig, saveConfig, listCrenaux, deleteCreneau, getCreneau } from '$lib/server/data';
+import { getConfig, saveConfig, listCrenaux, deleteCreneau, getCreneau, isAdmin } from '$lib/server/data';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	if (!locals.user) {
+	if (!locals.user || !isAdmin(locals.user.email)) {
 		redirect(302, '/');
 	}
 
@@ -12,6 +12,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	return {
 		allowedEmails: config.allowed_emails,
+		adminEmails: config.admin_emails ?? [],
 		crenaux,
 		user: locals.user
 	};
@@ -19,13 +20,12 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
 	saveEmails: async ({ request, locals }) => {
-		if (!locals.user) {
-			return fail(401, { error: 'Non autorisé' });
+		if (!locals.user || !isAdmin(locals.user.email)) {
+			return fail(403, { error: 'Non autorisé' });
 		}
 
 		const formData = await request.formData();
 		const raw = (formData.get('emails') as string) ?? '';
-
 		const emails = raw
 			.split('\n')
 			.map((e) => e.trim())
@@ -35,12 +35,31 @@ export const actions: Actions = {
 		config.allowed_emails = emails;
 		saveConfig(config);
 
-		return { success: true };
+		return { success: true, target: 'emails' };
+	},
+
+	saveAdmins: async ({ request, locals }) => {
+		if (!locals.user || !isAdmin(locals.user.email)) {
+			return fail(403, { error: 'Non autorisé' });
+		}
+
+		const formData = await request.formData();
+		const raw = (formData.get('admins') as string) ?? '';
+		const admins = raw
+			.split('\n')
+			.map((e) => e.trim())
+			.filter((e) => e.length > 0 && e.includes('@'));
+
+		const config = getConfig();
+		config.admin_emails = admins;
+		saveConfig(config);
+
+		return { success: true, target: 'admins' };
 	},
 
 	deleteCreneau: async ({ request, locals }) => {
-		if (!locals.user) {
-			return fail(401, { error: 'Non autorisé' });
+		if (!locals.user || !isAdmin(locals.user.email)) {
+			return fail(403, { error: 'Non autorisé' });
 		}
 
 		const formData = await request.formData();

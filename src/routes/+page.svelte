@@ -113,12 +113,12 @@
 
 		{#if data.crenaux.length === 0}
 			<div class="rounded-lg border border-dashed border-zinc-300 py-16 text-center">
-				<p class="mb-3 text-sm text-zinc-500">Aucun créneau pour l'instant.</p>
+				<p class="mb-3 text-sm text-zinc-500">Vous n'avez pas encore créé de créneau.</p>
 				<a
 					href="/nouveau"
 					class="text-sm font-medium text-zinc-950 underline underline-offset-4 hover:text-zinc-600"
 				>
-					Créer le premier
+					Créer mon premier créneau
 				</a>
 			</div>
 		{:else}

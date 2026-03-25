@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
 
-	let { data, children } = $props<{ data: LayoutData; children: Snippet }>();
+	let { data, children } = $props<{ data: LayoutData & { isAdmin: boolean }; children: Snippet }>();
 </script>
 
 <div class="flex min-h-screen flex-col bg-white text-zinc-950">
@@ -18,12 +18,14 @@
 					>
 						Nouveau
 					</a>
-					<a
-						href="/admin"
-						class="rounded-md px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"
-					>
-						Admin
-					</a>
+					{#if data.isAdmin}
+						<a
+							href="/admin"
+							class="rounded-md px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"
+						>
+							Admin
+						</a>
+					{/if}
 					<div class="mx-1 h-4 w-px bg-zinc-200"></div>
 					<div class="flex items-center gap-2 pl-1">
 						{#if data.user.picture}

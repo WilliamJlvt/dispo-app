@@ -34,6 +34,7 @@ export interface CalendarEvent {
 
 export interface AppConfig {
 	allowed_emails: string[];
+	admin_emails: string[];
 }
 
 export interface BestSlot {
