@@ -30,6 +30,7 @@ export interface CalendarEvent {
 	summary: string;
 	start: string; // ISO datetime
 	end: string; // ISO datetime
+	allDay: boolean;
 }
 
 export interface AppConfig {

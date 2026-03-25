@@ -56,8 +56,17 @@
 		return mySlots[date]?.includes(hour) ?? false;
 	}
 
+	function getAllDayEvents(date: string): CalendarEvent[] {
+		return initialCalendarEvents.filter((ev) => {
+			if (!ev.allDay) return false;
+			const evStart = ev.start.slice(0, 10);
+			const evEnd = ev.end.slice(0, 10); // Google end date is exclusive
+			return date >= evStart && date < evEnd;
+		});
+	}
+
 	function getSlotCalendarEvents(date: string, hour: number): CalendarEvent[] {
-		return initialCalendarEvents.filter((ev) => eventOverlapsSlot(ev, date, hour));
+		return initialCalendarEvents.filter((ev) => !ev.allDay && eventOverlapsSlot(ev, date, hour));
 	}
 
 	function toggleSlot(date: string, hour: number) {
@@ -252,7 +261,8 @@
 						<th class="sticky left-0 z-10 bg-zinc-50" style="min-width: 64px;"></th>
 						{#each dates as date (date)}
 							{@const parts = formatDateParts(date)}
-							<th class="border-l border-zinc-200 px-2 py-3 text-center" style="min-width: 80px;">
+							{@const dayEvents = getAllDayEvents(date)}
+							<th class="border-l border-zinc-200 px-2 py-2 text-center" style="min-width: 80px;">
 								<span
 									class="block text-[10px] font-semibold tracking-widest text-zinc-400 uppercase"
 									>{parts.day}</span
@@ -260,6 +270,18 @@
 								<span class="block text-sm leading-tight font-bold text-zinc-900"
 									>{parts.num} {parts.month}</span
 								>
+								{#if dayEvents.length > 0}
+									<div class="mt-1.5 flex flex-col gap-0.5">
+										{#each dayEvents as ev (ev.id)}
+											<div
+												class="truncate rounded bg-amber-400/90 px-1 py-px text-[9px] font-semibold leading-tight text-white"
+												title={ev.summary}
+											>
+												{ev.summary}
+											</div>
+										{/each}
+									</div>
+								{/if}
 							</th>
 						{/each}
 					</tr>

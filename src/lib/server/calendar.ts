@@ -52,23 +52,28 @@ export async function getCalendarEvents(
 			const endRaw = item.end?.dateTime ?? item.end?.date;
 			if (!startRaw || !endRaw) continue;
 
-			// For all-day events (date only), treat as full day
-			const start = startRaw.includes('T') ? startRaw : startRaw + 'T00:00:00';
-			const end = endRaw.includes('T') ? endRaw : endRaw + 'T23:59:59';
+			// Only show events where the user is the organizer or an attendee.
+			// This excludes events from followed/subscribed calendars (e.g. team or public calendars).
+			const isOrganizer = item.organizer?.self === true;
+			const isAttendee = item.attendees?.some((a) => a.self === true) ?? false;
+			if (!isOrganizer && !isAttendee) continue;
+
+			const allDay = !startRaw.includes('T');
+			const start = allDay ? startRaw + 'T00:00:00' : startRaw;
+			const end = allDay ? endRaw + 'T23:59:59' : endRaw;
 
 			events.push({
 				id: item.id ?? '',
 				summary: item.summary ?? '(Sans titre)',
 				start,
-				end
+				end,
+				allDay
 			});
 		}
 
-		console.log(`[calendar] ${events.length} events fetched (${dateStart} → ${dateEnd})`);
 		return { events };
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
-		console.error('[calendar] fetch failed:', message);
 
 		// Distinguish token expiry from other errors
 		const isAuthError =
@@ -76,7 +81,6 @@ export async function getCalendarEvents(
 			message.includes('Token has been expired') ||
 			message.includes('Invalid Credentials') ||
 			message.includes('unauthorized');
-
 		return { events: [], error: isAuthError ? 'auth_expired' : 'api_error' };
 	}
 }
