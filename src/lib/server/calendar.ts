@@ -1,18 +1,29 @@
 import { google as googleApis } from 'googleapis';
+import { env } from '$env/dynamic/private';
 import type { CalendarEvent } from '$lib/types';
 
 /**
  * Fetches events from the user's primary Google Calendar for the given date range.
+ * Uses the refresh token to obtain a fresh access token automatically.
  * Returns [] silently on any error (calendar access is optional/non-blocking).
  */
 export async function getCalendarEvents(
-	accessToken: string,
+	accessToken: string | undefined,
 	dateStart: string,
-	dateEnd: string
+	dateEnd: string,
+	refreshToken?: string
 ): Promise<CalendarEvent[]> {
+	if (!accessToken && !refreshToken) return [];
+
 	try {
-		const auth = new googleApis.auth.OAuth2();
-		auth.setCredentials({ access_token: accessToken });
+		const auth = new googleApis.auth.OAuth2(
+			env.GOOGLE_CLIENT_ID,
+			env.GOOGLE_CLIENT_SECRET
+		);
+		auth.setCredentials({
+			access_token: accessToken,
+			refresh_token: refreshToken
+		});
 
 		const calendar = googleApis.calendar({ version: 'v3', auth });
 

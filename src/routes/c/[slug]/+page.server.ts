@@ -15,11 +15,12 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	}
 
 	let calendarEvents: CalendarEvent[] = [];
-	if (locals.user.accessToken) {
+	if (locals.user.accessToken || locals.user.refreshToken) {
 		calendarEvents = await getCalendarEvents(
 			locals.user.accessToken,
 			creneau.date_start,
-			creneau.date_end
+			creneau.date_end,
+			locals.user.refreshToken
 		);
 	}
 

@@ -53,10 +53,8 @@
 		return mySlots[date]?.includes(hour) ?? false;
 	}
 
-	function hasCalendarEvent(date: string, hour: number): boolean {
-		return (initialCalendarEvents as CalendarEvent[]).some((ev) =>
-			eventOverlapsSlot(ev, date, hour)
-		);
+	function getSlotCalendarEvents(date: string, hour: number): CalendarEvent[] {
+		return initialCalendarEvents.filter((ev) => eventOverlapsSlot(ev, date, hour));
 	}
 
 	function toggleSlot(date: string, hour: number) {
@@ -186,9 +184,7 @@
 			<span>Votre sélection</span>
 		</div>
 		<div class="flex items-center gap-1.5">
-			<div class="relative h-3.5 w-3.5 rounded-sm border border-zinc-200 bg-zinc-100">
-				<div class="absolute top-0.5 right-0.5 h-1 w-1 rounded-full bg-orange-400"></div>
-			</div>
+			<div class="rounded bg-amber-400/90 px-1 py-px text-[9px] font-medium text-white">Réunion</div>
 			<span>Agenda Google</span>
 		</div>
 		<div class="flex items-center gap-1.5">
@@ -243,7 +239,7 @@
 							{#each dates as date, di (date)}
 								{@const conv = getConvergence(date, hour)}
 								{@const mine = isMySlot(date, hour)}
-								{@const hasEvent = hasCalendarEvent(date, hour)}
+								{@const slotEvents = getSlotCalendarEvents(date, hour)}
 								<td
 									class="group relative cursor-pointer select-none"
 									class:border-b={hi < hours.length - 1}
@@ -279,11 +275,18 @@
 										</div>
 									{/if}
 
-									<!-- Calendar dot -->
-									{#if hasEvent}
+									<!-- Calendar events -->
+									{#if slotEvents.length > 0}
 										<div
-											class="pointer-events-none absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-amber-400 ring-1 ring-white"
-										></div>
+											class="pointer-events-none absolute top-1 right-1 flex flex-col gap-0.5"
+											title={slotEvents.map((e) => e.summary).join(', ')}
+										>
+											{#each slotEvents.slice(0, 2) as ev (ev.id)}
+												<div class="max-w-[60px] truncate rounded bg-amber-400/90 px-1 py-px text-[9px] font-medium leading-tight text-white shadow-sm">
+													{ev.summary}
+												</div>
+											{/each}
+										</div>
 									{/if}
 
 									<!-- Count (only when at least 1 person available) -->
@@ -304,6 +307,22 @@
 							{/each}
 						</tr>
 					{/each}
+					<!-- End-time boundary row -->
+					<tr class="border-t border-zinc-200">
+						<td
+							class="sticky left-0 z-10 border-r border-zinc-200 bg-white px-3 text-right align-middle"
+							style="min-width: 56px; height: 24px;"
+						>
+							<span class="text-xs font-medium text-zinc-400">{formatHour(creneau.hour_end)}</span>
+						</td>
+						{#each dates as date, di (date)}
+							<td
+								class="bg-zinc-50"
+								class:border-r={di < dates.length - 1}
+								style="min-width: 84px; border-color: rgba(0,0,0,0.07);"
+							></td>
+						{/each}
+					</tr>
 				</tbody>
 			</table>
 		</div>

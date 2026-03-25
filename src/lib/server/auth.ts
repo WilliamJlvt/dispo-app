@@ -18,7 +18,8 @@ export async function createSession(user: SessionUser): Promise<string> {
 		email: user.email,
 		name: user.name,
 		picture: user.picture,
-		accessToken: user.accessToken ?? ''
+		accessToken: user.accessToken ?? '',
+		refreshToken: user.refreshToken ?? ''
 	})
 		.setProtectedHeader({ alg: 'HS256' })
 		.setIssuedAt()
@@ -33,7 +34,8 @@ export async function verifySession(token: string): Promise<SessionUser | null> 
 			email: payload.email as string,
 			name: payload.name as string,
 			picture: payload.picture as string,
-			accessToken: (payload.accessToken as string) || undefined
+			accessToken: (payload.accessToken as string) || undefined,
+			refreshToken: (payload.refreshToken as string) || undefined
 		};
 	} catch {
 		return null;

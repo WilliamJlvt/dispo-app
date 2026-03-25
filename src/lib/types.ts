@@ -3,6 +3,7 @@ export interface SessionUser {
 	name: string;
 	picture: string;
 	accessToken?: string;
+	refreshToken?: string;
 }
 
 export interface UserResponse {

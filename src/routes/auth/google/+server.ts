@@ -9,6 +9,8 @@ export const GET: RequestHandler = async ({ cookies }) => {
 	const url = await getGoogle().createAuthorizationURL(state, codeVerifier, {
 		scopes: ['email', 'profile', 'https://www.googleapis.com/auth/calendar.readonly']
 	});
+	url.searchParams.set('access_type', 'offline');
+	url.searchParams.set('prompt', 'consent');
 
 	cookies.set('oauth_state', state, {
 		path: '/',

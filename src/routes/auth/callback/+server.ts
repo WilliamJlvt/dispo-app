@@ -21,6 +21,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		const tokens = await getGoogle().validateAuthorizationCode(code, codeVerifier);
 
 		const accessToken = tokens.accessToken;
+		const refreshToken = tokens.refreshToken ?? undefined;
 
 		const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
 			headers: { Authorization: `Bearer ${accessToken}` }
@@ -44,7 +45,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		});
 		if (!isAllowed) redirect(302, '/?error=unauthorized');
 
-		const sessionToken = await createSession({ email, name, picture, accessToken });
+		const sessionToken = await createSession({ email, name, picture, accessToken, refreshToken });
 
 		cookies.set('session', sessionToken, {
 			path: '/',
