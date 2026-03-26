@@ -419,7 +419,7 @@
 
 									<!-- Hover tint -->
 									<div
-										class="pointer-events-none absolute bg-white opacity-0 transition-opacity duration-75 group-hover/cell:opacity-15"
+										class="pointer-events-none absolute inset-0 rounded-[6px] bg-black/0 transition-all duration-150 group-hover/cell:bg-black/8 group-hover/cell:shadow-[inset_0_0_0_1.5px_rgba(0,0,0,0.08)]"
 										style="inset: 3px; border-radius: 4px;"
 									></div>
 
