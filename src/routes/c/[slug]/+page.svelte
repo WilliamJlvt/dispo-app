@@ -347,7 +347,7 @@
 							{@const dayEvents = getAllDayEvents(date)}
 							<th
 								class="border-r border-b border-zinc-200 bg-white px-2 py-2 text-center"
-								style="min-width: 80px;"
+								style="min-width: 80px; max-width: 80px; width: 80px; overflow: hidden;"
 							>
 								<span
 									class="block text-[10px] font-semibold tracking-widest text-zinc-400 uppercase"
