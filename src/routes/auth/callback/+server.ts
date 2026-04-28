@@ -35,6 +35,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 		const config = getConfig();
 		const isAllowed = config.allowed_emails.some((pattern) => {
+			if (pattern === '*') return true;
 			if (pattern === email) return true;
 			if (pattern.startsWith('*@')) {
 				const domain = pattern.slice(2);
@@ -49,7 +50,6 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		cookies.set('session', sessionToken, {
 			path: '/',
 			httpOnly: true,
-			secure: false,
 			sameSite: 'lax',
 			maxAge: 60 * 60 * 24 * 7
 		});

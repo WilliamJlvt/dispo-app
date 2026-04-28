@@ -12,7 +12,6 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 		cookies.set('oauth_redirect', redirectTo, {
 			path: '/',
 			httpOnly: true,
-			secure: false,
 			sameSite: 'lax',
 			maxAge: 60 * 10
 		});
@@ -27,7 +26,6 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 	cookies.set('oauth_state', state, {
 		path: '/',
 		httpOnly: true,
-		secure: false,
 		sameSite: 'lax',
 		maxAge: 60 * 10
 	});
@@ -35,7 +33,6 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 	cookies.set('oauth_code_verifier', codeVerifier, {
 		path: '/',
 		httpOnly: true,
-		secure: false,
 		sameSite: 'lax',
 		maxAge: 60 * 10
 	});

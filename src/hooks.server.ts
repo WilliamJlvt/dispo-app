@@ -21,7 +21,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const needsAuth = PROTECTED_ROUTES.some((r) => path.startsWith(r));
 
 	if (needsAuth && !event.locals.user) {
-		redirect(302, '/');
+		const redirectTo = path + event.url.search;
+		redirect(302, `/auth/google?redirectTo=${encodeURIComponent(redirectTo)}`);
 	}
 
 	return resolve(event);
